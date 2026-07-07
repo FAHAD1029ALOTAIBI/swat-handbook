@@ -16,14 +16,14 @@ font-family:Arial,sans-serif;
 body{
 background:#0b1118;
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+margin:0;
+padding:40px;
+font-family:Arial,sans-serif;
 }
 
 .container{
-width:420px;
+width:95%;
+max-width:1200px;
 background:#121b25;
 padding:30px;
 border-radius:15px;
@@ -59,6 +59,47 @@ display:none;
 
 .back{
 background:#333;
+}
+  .swat-table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+background:#18222d;
+border-radius:10px;
+overflow:hidden;
+}
+
+.swat-table th{
+background:#1f2d3d;
+color:#7ec3ff;
+padding:12px;
+font-size:15px;
+}
+
+.swat-table td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.swat-table tr:hover{
+background:#223142;
+}
+
+.status{
+background:#d6b04a;
+color:#000;
+padding:5px 12px;
+border-radius:20px;
+font-weight:bold;
+}
+
+.member{
+background:#2d7d46;
+color:#fff;
+padding:5px 12px;
+border-radius:20px;
+font-weight:bold;
 }
 </style>
 </head>
@@ -129,8 +170,10 @@ background:#333;
 
 </div>
 
-<h1>جدول السوات</h1>
+<div id="schedule" class="page">
 
+<h1>جدول السوات</h1>
+<div style="overflow-x:auto;">
 <table class="swat-table">
 
 <thead>
@@ -212,6 +255,10 @@ background:#333;
 </tbody>
 
 </table>
+</div>
+<button class="back" onclick="home()">رجوع</button>
+
+</div>
 </div>
 
 <script>
