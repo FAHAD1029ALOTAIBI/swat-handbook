@@ -158,6 +158,14 @@ ol{
     color:white;
     font-size:16px;
 }
+    .login-box{
+    background:#11161d;
+    border:1px solid #3d4b59;
+    border-radius:15px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 0 25px rgba(0,0,0,.6);
+}
 </style>
 </head>
 
@@ -176,8 +184,7 @@ ol{
 
 <button onclick="show('schedule')">📅 جدول SWAT</button>
 
-<button onclick="openWanted()">🚨 المطلوبين</button>
-    
+<button onclick="show('wantedLogin')">🚨 المطلوبين</button>    
 </div>
 
 <div id="rules" class="page">
@@ -344,7 +351,21 @@ ol{
 <button class="back" onclick="home()">رجوع</button>
 
 </div>
+<div id="wantedLogin" class="page">
 
+<div class="login-box">
+
+<h1>🔒 تصريح دخول</h1>
+
+<input id="wantedPassword" type="password" placeholder="رمز الدخول">
+
+<button onclick="checkWantedPassword()">دخول</button>
+
+<button class="back" onclick="home()">رجوع</button>
+
+</div>
+
+</div>
 <div id="wanted" class="page">
 <h1>🚨 قائمة المطلوبين</h1>
 
@@ -360,18 +381,22 @@ ol{
 
 </div>
 <script>
-function openWanted(){
+function checkWantedPassword(){
 
-    let password = prompt("🔒 أدخل رمز الدخول:");
+let pass = document.getElementById("wantedPassword").value;
 
-    if(password === "SWAT2026"){
-        show('wanted');
-    }else{
-        alert("❌ رمز الدخول غير صحيح");
-    }
+if(pass === "SWAT2026"){
+
+    document.getElementById("wantedPassword").value="";
+    show("wanted");
+
+}else{
+
+    alert("❌ رمز الدخول غير صحيح");
 
 }
-function show(id){
+
+}function show(id){
 
 document.getElementById("home").style.display="none";
 
