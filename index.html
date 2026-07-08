@@ -166,6 +166,8 @@ ol{
 
 <button onclick="show('schedule')">📅 جدول SWAT</button>
 
+<button onclick="show('wanted')">🚨 المطلوبين</button>
+    
 </div>
 
 <div id="rules" class="page">
@@ -332,19 +334,31 @@ ol{
 <button class="back" onclick="home()">رجوع</button>
 
 </div>
-</div>
 
+<div id="wanted" class="page">
+<h1>🚨 قائمة المطلوبين</h1>
+
+<p style="text-align:center;color:#888;margin:20px 0;">
+لا يوجد مطلوبين حالياً
+</p>
+
+<button id="addWanted">➕ إضافة مطلوب</button>
+
+<div id="wantedList"></div>
+
+<button class="back" onclick="home()">رجوع</button>
+
+</div>
 <script>
 
 function show(id){
 
 document.getElementById("home").style.display="none";
 
-document.getElementById("rules").style.display="none";
-document.getElementById("uniform").style.display="none";
-document.getElementById("schedule").style.display="none";
+const pages = document.querySelectorAll(".page");
+pages.forEach(page => page.style.display = "none");
 
-document.getElementById(id).style.display="block";
+document.getElementById(id).style.display = "block";
 
 }
 
@@ -352,13 +366,14 @@ function home(){
 
 document.getElementById("home").style.display="block";
 
-document.getElementById("rules").style.display="none";
-document.getElementById("uniform").style.display="none";
-document.getElementById("schedule").style.display="none";
+const pages = document.querySelectorAll(".page");
+pages.forEach(page => page.style.display = "none");
 
 }
 
 </script>
+
+</div>
 
 </body>
 </html>
