@@ -381,33 +381,77 @@ pages.forEach(page => page.style.display = "none");
 
 }
 
+let wantedData = JSON.parse(localStorage.getItem("wanted")) || [];
+
+function saveWanted(){
+    localStorage.setItem("wanted", JSON.stringify(wantedData));
+}
+
+function displayWanted(){
+
+    const list = document.getElementById("wantedList");
+    list.innerHTML = "";
+
+    wantedData.forEach((item,index)=>{
+
+        const card = document.createElement("div");
+
+        card.style.background = "#1b232d";
+        card.style.border = "1px solid #3d4b59";
+        card.style.borderRadius = "10px";
+        card.style.padding = "15px";
+        card.style.marginTop = "15px";
+
+        card.innerHTML = `
+        <h3 style="color:#d8c27a;">${item.name}</h3>
+        <p>التهمة: ${item.crime}</p>
+
+        <button onclick="deleteWanted(${index})"
+        style="background:#542b2b;color:white;margin-top:10px;">
+        حذف المطلوب
+        </button>
+        `;
+
+        list.appendChild(card);
+
+    });
+}
+
+
+function deleteWanted(index){
+
+    wantedData.splice(index,1);
+    saveWanted();
+    displayWanted();
+
+}
+
+
 document.getElementById("addWanted").addEventListener("click", function(){
 
-const name = document.getElementById("wantedName").value;
-const crime = document.getElementById("wantedCrime").value;
+    const name = document.getElementById("wantedName").value;
+    const crime = document.getElementById("wantedCrime").value;
 
-if(!name || !crime) return;
+    if(!name || !crime) return;
 
-const card = document.createElement("div");
 
-card.style.background = "#1b232d";
-card.style.border = "1px solid #3d4b59";
-card.style.borderRadius = "10px";
-card.style.padding = "15px";
-card.style.marginTop = "15px";
+    wantedData.push({
+        name:name,
+        crime:crime
+    });
 
-card.innerHTML = `
-<h3 style="color:#d8c27a;">${name}</h3>
-<p>التهمة: ${crime}</p>
-<button onclick="this.parentElement.remove()" 
-style="background:#542b2b;color:white;margin-top:10px;">
-حذف المطلوب
-</button>
-`;
 
-document.getElementById("wantedList").appendChild(card);
+    saveWanted();
+    displayWanted();
+
+
+    document.getElementById("wantedName").value="";
+    document.getElementById("wantedCrime").value="";
 
 });
+
+
+displayWanted();
 
 </script>
 </div>
