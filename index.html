@@ -148,6 +148,16 @@ ol{
         transform:translateY(0);
     }
 }
+    input{
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    background:#1b232d;
+    border:1px solid #3d4b59;
+    border-radius:8px;
+    color:white;
+    font-size:16px;
+}
 </style>
 </head>
 
@@ -338,9 +348,9 @@ ol{
 <div id="wanted" class="page">
 <h1>🚨 قائمة المطلوبين</h1>
 
-<p style="text-align:center;color:#888;margin:20px 0;">
-لا يوجد مطلوبين حالياً
-</p>
+<input id="wantedName" placeholder="اسم المطلوب">
+
+<input id="wantedCrime" placeholder="التهمة">
 
 <button id="addWanted">➕ إضافة مطلوب</button>
 
@@ -373,11 +383,10 @@ pages.forEach(page => page.style.display = "none");
 
 document.getElementById("addWanted").addEventListener("click", function(){
 
-const name = prompt("اسم المطلوب:");
-if(!name) return;
+const name = document.getElementById("wantedName").value;
+const crime = document.getElementById("wantedCrime").value;
 
-const crime = prompt("التهمة:");
-if(!crime) return;
+if(!name || !crime) return;
 
 const card = document.createElement("div");
 
@@ -390,6 +399,10 @@ card.style.marginTop = "15px";
 card.innerHTML = `
 <h3 style="color:#d8c27a;">${name}</h3>
 <p>التهمة: ${crime}</p>
+<button onclick="this.parentElement.remove()" 
+style="background:#542b2b;color:white;margin-top:10px;">
+حذف المطلوب
+</button>
 `;
 
 document.getElementById("wantedList").appendChild(card);
