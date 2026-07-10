@@ -153,7 +153,6 @@ padding:15px;
 margin-top:15px;
 }
 
-/* بطاقات جودة للمهمات الناجحة والفاشلة */
 .badge {
 display: inline-block;
 padding: 5px 12px;
@@ -248,8 +247,18 @@ margin-top: 5px;
         <h1>🎯 مهمات SWAT</h1>
         <p style="text-align:center;margin:20px 0;color:#ccc;">قسم رصد ومتابعة نتائج العمليات الميدانية للفرقة.</p>
         <button onclick="show('createMission')">➕ رصد مهمة جديدة</button>
-        <button onclick="displayMissions(); show('missionsList');">📂 عرض سجل المهمات</button>
+        <button onclick="show('missionsListLogin')">📂 عرض سجل المهمات (🔒 مقفل)</button>
         <button class="back" onclick="home()">رجوع</button>
+    </div>
+
+    <!-- شاشة قفل سجل المهمات -->
+    <div id="missionsListLogin" class="page">
+        <div class="login-box">
+            <h1>🔒 تصريح دخول سجل المهمات</h1>
+            <input id="missionsPassword" type="password" placeholder="رمز الدخول">
+            <button onclick="checkMissionsPassword()">دخول</button>
+            <button class="back" onclick="show('missionsDashboard')">رجوع</button>
+        </div>
     </div>
 
     <!-- شاشة إنشاء مهمة -->
@@ -373,7 +382,7 @@ margin-top: 5px;
 </div>
 
 <script>
-// قواعد البيانات المحلية للمهمات والتقارير والمطلوبين
+// قاعدة البيانات المحلية
 let wantedData = JSON.parse(localStorage.getItem("wanted")) || [];
 let reportsData = JSON.parse(localStorage.getItem("swat_reports")) || [];
 let missionsData = JSON.parse(localStorage.getItem("swat_missions")) || [];
@@ -391,7 +400,7 @@ function home(){
     pages.forEach(page=>{ page.style.display="none"; });
 }
 
-// التحكم في كلمات المرور الموحدة (1029)
+// نظام التحقق من كلمات المرور (1029)
 function checkWantedPassword(){
     let pass=document.getElementById("wantedPassword").value;
     if(pass==="1029"){
@@ -415,6 +424,15 @@ function checkSecretPassword(){
         document.getElementById("secretPassword").value="";
         displayReports();
         show("secretReports");
+    }else{ alert("❌ رمز الدخول غير صحيح"); }
+}
+
+function checkMissionsPassword(){
+    let pass=document.getElementById("missionsPassword").value;
+    if(pass==="1029"){
+        document.getElementById("missionsPassword").value="";
+        displayMissions();
+        show("missionsList");
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
@@ -459,7 +477,7 @@ document.getElementById("addWanted").onclick=function(){
     document.getElementById("wantedCrime").value="";
 };
 
-// إدارة نظام المهمات الجديد
+// إدارة نظام المهمات
 function clearMissionForm(){
     document.getElementById("misId").value="";
     document.getElementById("misDate").value="";
