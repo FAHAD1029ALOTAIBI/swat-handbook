@@ -552,11 +552,11 @@ let a = "❌ لا أعرف الإجابة.";
 
 const question = q.toLowerCase();
 
-if(question.includes("قائد") || question.includes("رئيس")){
+if(question.includes("القائد") || question.includes("الرئيس")){
 a="قائد SWAT هو فهد المطيري.";
 }
 
-else if(question.includes("نائب الرئيس")){
+else if(question.includes(" النائب")){
 a="نائب القائد هو كارلوس المطيري.";
 }
 
@@ -573,12 +573,9 @@ a="أعضاء Bravo هم: ريان خالد - James Kruise - Older Mohammed - Ba
 }
 
 else if(question.includes("وزير")){
-a="وزير الداخلية هو راشد سعد.";
+a="وزير الداخلية هو راشد سعد و نائبه هو  مايكل آرثر.";
 }
 
-else if(question.includes("نائب وزير")){
-a="نائب وزير الداخلية هو مايكل آرثر.";
-}
 
 else if(question.includes("الاكواد") || question.includes("الأكواد")){
 a="الأكواد المتاحة حالياً هي من R-12 فما فوق.";
