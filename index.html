@@ -185,6 +185,8 @@ ol{
 <button onclick="show('schedule')">📅 جدول SWAT</button>
 
 <button onclick="show('wantedLogin')">🚨 المطلوبين</button>    
+
+<button onclick="show('askAI')">🤖 اسألني</button>
 </div>
 
 <div id="rules" class="page">
@@ -400,6 +402,29 @@ ol{
 <button class="back" onclick="home()">رجوع</button>
 
 </div>
+<div id="askAI" class="page">
+
+<h1>🤖 اسألني</h1>
+
+<div id="chatBox" style="
+height:400px;
+overflow-y:auto;
+background:#151c24;
+border:1px solid #2a323d;
+border-radius:10px;
+padding:15px;
+margin-bottom:15px;
+"></div>
+
+<input
+id="userQuestion"
+placeholder="اكتب سؤالك هنا...">
+
+<button onclick="askAI()">إرسال</button>
+
+<button class="back" onclick="home()">رجوع</button>
+
+</div>
 <script>
 function checkWantedPassword(){
 
@@ -507,7 +532,110 @@ document.getElementById("addWanted").addEventListener("click", function(){
 
 
 displayWanted();
+function askAI(){
 
+const q = document.getElementById("userQuestion").value.trim();
+if(q=="") return;
+
+const chat = document.getElementById("chatBox");
+
+chat.innerHTML += `
+<div style="text-align:right;margin:10px 0;">
+<b style="color:#4da3ff;">أنت:</b><br>${q}
+</div>
+`;
+
+let a = "❌ لا أعرف الإجابة.";
+
+const question = q.toLowerCase();
+
+if(question.includes("قائد") || question.includes("رئيس")){
+a="قائد SWAT هو فهد المطيري.";
+}
+
+else if(question.includes("نائب القائد")){
+a="نائب القائد هو كارلوس المطيري.";
+}
+
+else if(question.includes("عدد")){
+a="عدد أعضاء فرقة SWAT هو 12 عضو.";
+}
+
+else if(question.includes("alpha")){
+a="أعضاء Alpha هم: JOHN Marly - Mov Marley - Syker Exxon - Marcus Leno.";
+}
+
+else if(question.includes("bravo")){
+a="أعضاء Bravo هم: ريان خالد - James Kruise - Older Mohammed - Badr Al-Mutairi.";
+}
+
+else if(question.includes("وزير")){
+a="وزير الداخلية هو راشد سعد.";
+}
+
+else if(question.includes("نائب وزير")){
+a="نائب وزير الداخلية هو مايكل آرثر.";
+}
+
+else if(question.includes("الاكواد") || question.includes("الأكواد")){
+a="الأكواد المتاحة حالياً هي من R-12 فما فوق.";
+}
+
+else if(question.includes("كود المداهمة")){
+a="لا يوجد كود مداهمة حالياً.";
+}
+
+else if(question.includes("القوانين")){
+a="الرجاء مراجعة صفحة القوانين داخل التطبيق.";
+}
+
+else if(question.includes("الترقية")){
+a="شرط الترقية الأساسي هو الانضباط.";
+}
+
+else if(question.includes("اصطفاف")){
+a="اسأل المسؤول المتواجد حالياً.";
+}
+
+else if(question.includes("المناوب")){
+a="المسؤول المناوب هو أعلى رتبة متواجدة.";
+}
+
+else if(question.includes("اللبس")){
+a="اللبس الرسمي موجود في صفحة اللبس.";
+}
+
+else if(question.includes("الرتب")){
+a="الرتب هي: SWAT Chief - Deputy Chief - Supervisor - Member.";
+}
+
+else if(question.includes("دعم")){
+a="إذا كنت مع SPD اتبع بروتوكولاتهم، وإذا كنت مع SWAT استخدم الكلمات المشفرة.";
+}
+
+else if(question.includes("بنك") || question.includes("اقتحام")){
+a="التمركز، أخذ الحيطة والحذر، ثم تنفيذ المداهمة بسرية.";
+}
+
+else if(question.includes("تقرير")){
+a="سلّم التقرير إلى أحد المشرفين (Supervisor) دون تخطي التسلسل الإداري.";
+}
+
+else if(question.includes("التجمع")){
+a="نقطة التجمع هي المركز.";
+}
+
+chat.innerHTML += `
+<div style="text-align:left;margin:10px 0;">
+<b style="color:#d8c27a;">SWAT AI:</b><br>${a}
+</div>
+`;
+
+chat.scrollTop = chat.scrollHeight;
+
+document.getElementById("userQuestion").value="";
+
+}
 </script>
 </div>
 
