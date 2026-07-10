@@ -409,8 +409,9 @@ padding-right:25px;
 
 <button onclick="show('createReport')">📤 إنشاء تقرير</button>
 
-<button onclick="show('reportsList')">📂 عرض التقارير</button>
-
+<button onclick="show('reportsListLogin')">
+📂 عرض التقارير
+</button>
 <button onclick="show('reportsLogin')">🔒 التقارير السرية</button>
     
 <button class="back" onclick="home()">رجوع</button>
@@ -440,10 +441,16 @@ padding-right:25px;
 <textarea
 placeholder="📝 تفاصيل التقرير"
 style="width:100%;height:180px;padding:15px;margin:10px 0;background:#1b232d;border:1px solid #3d4b59;border-radius:8px;color:white;"></textarea>
-
+<label style="display:block;margin:15px 0;font-size:18px;">
+<input id="secretReport" type="checkbox">
+🔒 هل التقرير سري؟
+</label>
+    
 <button>📤 حفظ التقرير</button>
 
-<button class="back" onclick="show('reports')">رجوع</button>
+<button class="back" onclick="clearReportForm(); show('reports');">
+رجوع
+</button>
 
 </div>
 <div id="reportsList" class="page">
@@ -465,9 +472,13 @@ style="width:100%;height:180px;padding:15px;margin:10px 0;background:#1b232d;bor
 
 <h1>🔒 التقارير السرية</h1>
 
-<input type="password" placeholder="رمز الدخول">
+<input id="secretPassword"
+type="password"
+placeholder="رمز الدخول">
 
-<button>دخول</button>
+<button onclick="checkSecretPassword()">
+دخول
+</button>
 
 <button class="back" onclick="show('reports')">
 رجوع
@@ -476,7 +487,59 @@ style="width:100%;height:180px;padding:15px;margin:10px 0;background:#1b232d;bor
 </div>
 
 </div>
+<div id="reportsListLogin" class="page">
+
+<div class="login-box">
+
+<h1>🔒 عرض التقارير</h1>
+
+<input id="reportsPassword"
+type="password"
+placeholder="رمز الدخول">
+
+<button onclick="checkReportsPassword()">
+دخول
+</button>
+
+<button class="back"
+onclick="show('reports')">
+رجوع
+</button>
+
+</div>
+
+</div>
+<div id="secretReports" class="page">
+
+<h1>🔒 التقارير السرية</h1>
+
+<p style="text-align:center;color:#aaa;">
+لا توجد تقارير سرية حالياً.
+</p>
+
+<button class="back" onclick="show('reports')">
+رجوع
+</button>
+
+</div>
 <script>
+
+function checkSecretPassword(){
+
+let pass=document.getElementById("secretPassword").value;
+
+if(pass==="1029"){
+
+document.getElementById("secretPassword").value="";
+show("secretReports");
+
+}else{
+
+alert("❌ رمز الدخول غير صحيح");
+
+}
+
+}
 
 function show(id){
 
@@ -590,7 +653,22 @@ list.appendChild(card);
 
 }
 
+function checkReportsPassword(){
 
+let pass=document.getElementById("reportsPassword").value;
+
+if(pass==="1029"){
+
+document.getElementById("reportsPassword").value="";
+show("reportsList");
+
+}else{
+
+alert("❌ رمز الدخول غير صحيح");
+
+}
+
+}
 
 function deleteWanted(index){
 
@@ -649,7 +727,19 @@ document.getElementById("wantedCrime").value="";
 
 displayWanted();
 
+function clearReportForm(){
 
+document.querySelector("#createReport input[placeholder='🆔 رقم التقرير']").value="";
+document.querySelector("#createReport input[type='date']").value="";
+document.querySelector("#createReport input[type='time']").value="";
+document.querySelector("#createReport input[placeholder='👮 قائد العملية']").value="";
+document.querySelector("#createReport input[placeholder='👥 المشاركون']").value="";
+document.querySelector("#createReport input[placeholder='📍 موقع العملية']").value="";
+document.querySelector("#createReport textarea").value="";
+document.querySelector("#createReport select").selectedIndex=0;
+document.getElementById("secretReport").checked=false;
+
+}
 </script>
 
 
