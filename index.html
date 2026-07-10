@@ -38,13 +38,48 @@ padding:35px;
 box-shadow:0 0 40px rgba(0,0,0,.7);
 }
 
-.logo{
-display:block;
-width:120px;
-height:120px;
-object-fit:contain;
-margin:0 auto 20px;
-filter:drop-shadow(0 0 10px #000);
+/* 🎨 الشعار الرقمي الجديد المضيء بديل الصورة المكسورة */
+.swat-logo-css {
+width: 130px;
+height: 130px;
+background: radial-gradient(circle, #1a232d 40%, #0d131a 100%);
+border: 4px double #d8c27a;
+border-radius: 50%;
+margin: 0 auto 20px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+box-shadow: 0 0 20px rgba(216, 194, 122, 0.2), inset 0 0 15px rgba(0,0,0,0.6);
+position: relative;
+}
+
+.swat-logo-css::before {
+content: '★ ★ ★';
+color: #d8c27a;
+font-size: 10px;
+position: absolute;
+top: 15px;
+letter-spacing: 2px;
+}
+
+.swat-logo-text {
+color: #d8c27a;
+font-size: 28px;
+font-weight: 900;
+letter-spacing: 2px;
+text-shadow: 0 0 10px rgba(216, 194, 122, 0.6), 2px 2px 2px #000;
+font-family: 'Impact', 'Arial Black', sans-serif;
+margin-top: 10px;
+}
+
+.swat-logo-subtext {
+color: #8fa3b4;
+font-size: 9px;
+font-weight: bold;
+letter-spacing: 3px;
+text-transform: uppercase;
+margin-top: -2px;
 }
 
 h1{
@@ -172,7 +207,12 @@ margin-top: 5px;
 
     <!-- القائمة الرئيسية -->
     <div id="home">
-        <img src="swat-logo.png" class="logo">
+        <!-- تم استبدال الصورة بالشعار الفخم هنا -->
+        <div class="swat-logo-css">
+            <div class="swat-logo-text">SWAT</div>
+            <div class="swat-logo-subtext">UNIT</div>
+        </div>
+
         <h1>SWAT HANDBOOK</h1>
         <button onclick="show('rules')">📋 قوانين SWAT</button>
         <button onclick="show('uniform')">👕 لبس SWAT</button>
