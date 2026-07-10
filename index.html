@@ -110,20 +110,6 @@ padding:14px;
 border-bottom:1px solid #2b3642;
 }
 
-.status{
-background:#d8c27a;
-color:#111;
-padding:6px 14px;
-border-radius:30px;
-}
-
-.member{
-background:#2a313d;
-color:white;
-padding:6px 14px;
-border-radius:30px;
-}
-
 select,
 textarea{
 width:100%;
@@ -159,13 +145,25 @@ line-height:2;
 padding-right:25px;
 }
 
-.report-card, .wanted-card {
+.report-card, .wanted-card, .mission-card {
 background:#1b232d;
 border:1px solid #3d4b59;
 border-radius:10px;
 padding:15px;
 margin-top:15px;
 }
+
+/* بطاقات جودة للمهمات الناجحة والفاشلة */
+.badge {
+display: inline-block;
+padding: 5px 12px;
+border-radius: 20px;
+font-weight: bold;
+font-size: 14px;
+margin-top: 5px;
+}
+.badge-success { background: #1b5e20; color: #fff; border: 1px solid #4caf50; }
+.badge-fail { background: #b71c1c; color: #fff; border: 1px solid #f44336; }
 </style>
 </head>
 
@@ -173,16 +171,19 @@ margin-top:15px;
 
 <div class="container">
 
+    <!-- القائمة الرئيسية -->
     <div id="home">
         <img src="swat-logo.png" class="logo">
         <h1>SWAT HANDBOOK</h1>
         <button onclick="show('rules')">📋 قوانين SWAT</button>
         <button onclick="show('uniform')">👕 لبس SWAT</button>
         <button onclick="show('schedule')">📅 جدول SWAT</button>
+        <button onclick="show('missionsDashboard')">🎯 مهمات SWAT</button>
         <button onclick="show('wantedLogin')">🚨 المطلوبين</button>
         <button onclick="show('reports')">📄 تقارير SWAT</button>
     </div>
 
+    <!-- شاشة القوانين -->
     <div id="rules" class="page">
         <h1>القوانين</h1>
         <ol>
@@ -205,12 +206,14 @@ margin-top:15px;
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
+    <!-- شاشة اللبس -->
     <div id="uniform" class="page">
         <h1>اللبس</h1>
         <p style="text-align:center; margin:20px 0;">ضع صور اللبس والأرقام هنا.</p>
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
+    <!-- شاشة جدول الأعضاء -->
     <div id="schedule" class="page">
         <h1>جدول SWAT</h1>
         <div style="overflow-x:auto">
@@ -240,6 +243,45 @@ margin-top:15px;
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
+    <!-- قسم المهمات الرئيسي -->
+    <div id="missionsDashboard" class="page">
+        <h1>🎯 مهمات SWAT</h1>
+        <p style="text-align:center;margin:20px 0;color:#ccc;">قسم رصد ومتابعة نتائج العمليات الميدانية للفرقة.</p>
+        <button onclick="show('createMission')">➕ رصد مهمة جديدة</button>
+        <button onclick="displayMissions(); show('missionsList');">📂 عرض سجل المهمات</button>
+        <button class="back" onclick="home()">رجوع</button>
+    </div>
+
+    <!-- شاشة إنشاء مهمة -->
+    <div id="createMission" class="page">
+        <h1>🎯 رصد مهمة جديدة</h1>
+        <input id="misId" placeholder="🆔 رقم أو رمز المهمة">
+        <input id="misDate" type="date">
+        <input id="misTime" type="time">
+        <input id="misLeader" placeholder="👮 قائد المهمة">
+        <input id="misMembers" placeholder="👥 الأعضاء المشاركين">
+        <input id="misLocation" placeholder="📍 موقع حدوث المهمة">
+        <input id="misCriminals" placeholder="🦹 المجرمين المتسببين (أسماء أو عصابة)">
+        
+        <select id="misResult">
+            <option value="success">🟢 عملية ناجحة</option>
+            <option value="fail">🔴 عملية فاشلة</option>
+        </select>
+
+        <textarea id="misDetails" placeholder="📝 تفاصيل وأحداث المهمة كاملة" style="height:150px;"></textarea>
+        
+        <button onclick="saveMission()">💾 حفظ المهمة في السجل</button>
+        <button class="back" onclick="clearMissionForm(); show('missionsDashboard');">رجوع</button>
+    </div>
+
+    <!-- شاشة عرض سجل المهمات -->
+    <div id="missionsList" class="page">
+        <h1>📂 سجل المهمات المرصودة</h1>
+        <div id="missionsContainer"><p style="text-align:center;color:#aaa;">لا توجد مهمات مسجلة حالياً.</p></div>
+        <button class="back" onclick="show('missionsDashboard')">رجوع</button>
+    </div>
+
+    <!-- شاشة دخول المطلوبين -->
     <div id="wantedLogin" class="page">
         <div class="login-box">
             <h1>🔒 تصريح دخول المطلوبين</h1>
@@ -249,6 +291,7 @@ margin-top:15px;
         </div>
     </div>
 
+    <!-- شاشة المطلوبين -->
     <div id="wanted" class="page">
         <h1>🚨 قائمة المطلوبين</h1>
         <input id="wantedName" placeholder="اسم المطلوب">
@@ -258,6 +301,7 @@ margin-top:15px;
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
+    <!-- قسم التقارير الرئيسي -->
     <div id="reports" class="page">
         <h1>📄 تقارير SWAT</h1>
         <p style="text-align:center;margin:20px 0;color:#ccc;">يختص هذا القسم بتوثيق جميع عمليات ومهام فرقة SWAT.</p>
@@ -267,6 +311,7 @@ margin-top:15px;
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
+    <!-- شاشة إنشاء تقرير -->
     <div id="createReport" class="page">
         <h1>📤 إنشاء تقرير</h1>
         <input id="repId" placeholder="🆔 رقم التقرير">
@@ -291,12 +336,14 @@ margin-top:15px;
         <button class="back" onclick="clearReportForm(); show('reports');">رجوع</button>
     </div>
 
+    <!-- شاشة عرض التقارير العادية -->
     <div id="reportsList" class="page">
         <h1>📂 عرض التقارير العادية</h1>
         <div id="normalReportsContainer"><p style="text-align:center;color:#aaa;">لا توجد تقارير حالياً.</p></div>
         <button class="back" onclick="show('reports')">رجوع</button>
     </div>
 
+    <!-- قفل التقارير السرية -->
     <div id="reportsLogin" class="page">
         <div class="login-box">
             <h1>🔒 دخول التقارير السرية</h1>
@@ -306,6 +353,7 @@ margin-top:15px;
         </div>
     </div>
 
+    <!-- قفل عرض التقارير -->
     <div id="reportsListLogin" class="page">
         <div class="login-box">
             <h1>🔒 دخول عرض التقارير</h1>
@@ -315,6 +363,7 @@ margin-top:15px;
         </div>
     </div>
 
+    <!-- شاشة التقارير السرية -->
     <div id="secretReports" class="page">
         <h1>🔒 التقارير السرية</h1>
         <div id="secretReportsContainer"><p style="text-align:center;color:#aaa;">لا توجد تقارير سرية حالياً.</p></div>
@@ -324,9 +373,10 @@ margin-top:15px;
 </div>
 
 <script>
-// قاعدة البيانات المحلية للتقارير والمطلوبين
+// قواعد البيانات المحلية للمهمات والتقارير والمطلوبين
 let wantedData = JSON.parse(localStorage.getItem("wanted")) || [];
 let reportsData = JSON.parse(localStorage.getItem("swat_reports")) || [];
+let missionsData = JSON.parse(localStorage.getItem("swat_missions")) || [];
 
 function show(id){
     document.getElementById("home").style.display="none";
@@ -341,7 +391,7 @@ function home(){
     pages.forEach(page=>{ page.style.display="none"; });
 }
 
-// التحقق من كلمات المرور
+// التحكم في كلمات المرور الموحدة (1029)
 function checkWantedPassword(){
     let pass=document.getElementById("wantedPassword").value;
     if(pass==="1029"){
@@ -409,7 +459,85 @@ document.getElementById("addWanted").onclick=function(){
     document.getElementById("wantedCrime").value="";
 };
 
-// إدارة التقارير وحفظها
+// إدارة نظام المهمات الجديد
+function clearMissionForm(){
+    document.getElementById("misId").value="";
+    document.getElementById("misDate").value="";
+    document.getElementById("misTime").value="";
+    document.getElementById("misLeader").value="";
+    document.getElementById("misMembers").value="";
+    document.getElementById("misLocation").value="";
+    document.getElementById("misCriminals").value="";
+    document.getElementById("misResult").selectedIndex=0;
+    document.getElementById("misDetails").value="";
+}
+
+function saveMission(){
+    let id = document.getElementById("misId").value.trim();
+    let date = document.getElementById("misDate").value;
+    let time = document.getElementById("misTime").value;
+    let leader = document.getElementById("misLeader").value.trim();
+    let members = document.getElementById("misMembers").value.trim();
+    let location = document.getElementById("misLocation").value.trim();
+    let criminals = document.getElementById("misCriminals").value.trim();
+    let result = document.getElementById("misResult").value;
+    let details = document.getElementById("misDetails").value.trim();
+
+    if(!id || !date || !time || !leader || !criminals || !details){
+        alert("❌ الرجاء ملء الحقول الأساسية (الرقم، التاريخ، الوقت، القائد، المجرمين، التفاصيل)");
+        return;
+    }
+
+    missionsData.push({
+        id: id, date: date, time: time, leader: leader,
+        members: members, location: location, criminals: criminals,
+        result: result, details: details
+    });
+
+    localStorage.setItem("swat_missions", JSON.stringify(missionsData));
+    alert("تم حفظ ورصد المهمة بنجاح ✅");
+    clearMissionForm();
+    show("missionsDashboard");
+}
+
+function displayMissions(){
+    let container = document.getElementById("missionsContainer");
+    container.innerHTML = "";
+
+    if(missionsData.length === 0){
+        container.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد مهمات مسجلة في السجل حالياً.</p>';
+        return;
+    }
+
+    missionsData.forEach((mis, index) => {
+        let isSuccess = mis.result === "success";
+        let badgeClass = isSuccess ? "badge-success" : "badge-fail";
+        let badgeText = isSuccess ? "🟢 عملية ناجحة" : "🔴 عملية فاشلة";
+
+        container.innerHTML += `
+            <div class="mission-card">
+                <h3 style="color:#d8c27a;">مهمة رقم: ${mis.id} <span class="badge ${badgeClass}">${badgeText}</span></h3>
+                <p style="margin-top:8px;"><b>📅 وقت وتاريخ الحدوث:</b> ${mis.date} | ${mis.time}</p>
+                <p><b>📍 الموقع:</b> ${mis.location || 'غير محدد'}</p>
+                <p><b>👮 قائد المهمة:</b> ${mis.leader}</p>
+                <p><b>👥 المشاركون من السوات:</b> ${mis.members || 'لا يوجد'}</p>
+                <p style="color:#ff6b6b;"><b>🦹 المجرمين المتسببين:</b> ${mis.criminals}</p>
+                <p style="margin-top:10px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 تفاصيل المهمة:</b>\n${mis.details}</p>
+                <button onclick="deleteMission(${index})" style="background:#542b2b; color:white; padding:6px; font-size:13px; margin-top:10px; width:auto;">🗑️ حذف من السجل</button>
+            </div>
+        `;
+    });
+}
+
+function deleteMission(index){
+    if(confirm("هل أنت متأكد من حذف هذه المهمة من السجل؟")){
+        missionsData.splice(index, 1);
+        localStorage.setItem("swat_missions", JSON.stringify(missionsData));
+        displayMissions();
+    }
+}
+
+// إدارة التقارير
 function clearReportForm(){
     document.getElementById("repId").value="";
     document.getElementById("repDate").value="";
@@ -434,7 +562,7 @@ function saveReport(){
     let isSecret = document.getElementById("secretReport").checked;
 
     if(!id || !date || !time || !leader || !details){
-        alert("❌ الرجاء ملء الحقول الأساسية للتقرير (الرقم، التاريخ، الوقت، القائد، التفاصيل)");
+        alert("❌ الرجاء ملء الحقول الأساسية للتقرير");
         return;
     }
 
@@ -494,7 +622,7 @@ function deleteReport(index){
     }
 }
 
-// تشغيل العرض الأولي للمطلوبين عند فتح الصفحة
+// العرض التلقائي الأولي عند التشغيل
 displayWanted();
 </script>
 </body>
