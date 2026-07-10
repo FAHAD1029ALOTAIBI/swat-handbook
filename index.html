@@ -553,88 +553,200 @@ chat.innerHTML += `
 let a="❌ لا توجد معلومات مسجلة عن ذلك.";
 
 
-// القيادة
-if(question.includes("قائد swat") || question.includes("من قائد السوات")){
-a="قائد SWAT هو فهد المطيري.";
-}
+// التحية
+question.includes("السلام عليكم") ||
+question.includes("سلام") ||
+question.includes("هلا") ||
+question.includes("مرحبا") ||
+question.includes("أهلا") ||
+question.includes("اهلا") ||
+question.includes("هاي") ||
+question.includes("صباح الخير") ||
+question.includes("مساء الخير")
 
-else if(question.includes("نائب") && question.includes("swat")){
-a="نائب قائد SWAT هو كارلوس المطيري.";
-}
+// قائد SWAT
+question.includes("قائد") ||
+question.includes("القائد") ||
+question.includes("قائد السوات") ||
+question.includes("من قائد السوات") ||
+question.includes("من قائد swat") ||
+question.includes("قائد swat") ||
+question.includes("رئيس السوات")
 
-else if(question.includes("وزير")){
-a="وزير الداخلية هو راشد سعد.";
-}
+// نائب قائد SWAT
+question.includes("النائب") ||
+question.includes("من النائب") ||
+question.includes("نائب السوات") ||
+question.includes("نائب قائد السوات") ||
+question.includes("نائب قائد swat") ||
+question.includes("من نائب السوات") ||
+question.includes("نائب swat")
 
-else if(question.includes("نائب وزير")){
-a="نائب وزير الداخلية هو مايكل آرثر.";
-}
+// رئيس LSPD
+question.includes("رئيس lspd") ||
+question.includes("من رئيس lspd") ||
+question.includes("رئيس الشرطة") ||
+question.includes("رئيس الشرطه") ||
+question.includes("من رئيس الشرطة") ||
+question.includes("من رئيس الشرطه") ||
+question.includes("قيادة الشرطة") ||
+question.includes("قيادة lspd")
 
-else if(question.includes("رئيس spd")){
-a="رئيس SPD هو آرثر رين.";
-}
+// نائب رئيس LSPD
+question.includes("نائب رئيس lspd") ||
+question.includes("من نائب رئيس lspd") ||
+question.includes("نائب الشرطة") ||
+question.includes("نائب رئيس الشرطة") ||
+question.includes("نائب رئيس الشرطه") ||
+question.includes("من نائب الشرطة") ||
+question.includes("نائب lspd")
 
-// الأعضاء
-else if(
-question.includes("عدد") &&
-(question.includes("اعضاء") || question.includes("أعضاء"))
-){
-a="عدد أعضاء SWAT هو 12.";
-}
+// المشرفين
+question.includes("المشرف") ||
+question.includes("المشرفين") ||
+question.includes("من المشرف") ||
+question.includes("supervisor")
 
-else if(question.includes("alpha")){
-a="أعضاء Alpha:\nJohn Marly\nMov Marley\nSyker Exxon\nMarcus Leno";
-}
+// فريق Alpha
+question.includes("الفا") ||
+question.includes("alpha") ||
+question.includes("اعضاء alpha") ||
+question.includes("أعضاء alpha") ||
+question.includes("فريق alpha") ||
+question.includes("وحدة alpha")
 
-else if(question.includes("bravo")){
-a="أعضاء Bravo:\nريان خالد\nJames Kruise\nOlder Mohammed\nBadr Al-Mutairi";
-}
+// فريق Bravo
+question.includes("برافو") ||
+question.includes("bravo") ||
+question.includes("اعضاء bravo") ||
+question.includes("أعضاء bravo") ||
+question.includes("فريق bravo") ||
+question.includes("وحدة bravo")
 
-// القوانين
-else if(question.includes("القوانين")){
-a="راجع صفحة القوانين داخل التطبيق.";
-}
-
-// اللبس
-else if(question.includes("اللبس")){
-a="راجع صفحة اللبس.";
-}
+// عدد الأعضاء
+question.includes("كم عضو") ||
+question.includes("عدد الاعضاء") ||
+question.includes("عدد الأعضاء") ||
+question.includes("كم عدد الاعضاء") ||
+question.includes("كم عدد الأعضاء") ||
+question.includes("عدد الفريق")
 
 // الرتب
-else if(question.includes("الرتب")){
-a="SWAT Chief\nDeputy Chief\nSupervisor\nMember";
-}
+question.includes("الرتب") ||
+question.includes("رتب") ||
+question.includes("رتب السوات") ||
+question.includes("رتبة") ||
+question.includes("rank") ||
+question.includes("الرانكات")
 
-// الترقية
-else if(question.includes("ترقية")){
-a="الترقية تكون بعد الوصول إلى عدد البوينتات المطلوبة.";
-}
+// القوانين
+question.includes("القوانين") ||
+question.includes("قوانين") ||
+question.includes("قوانين السوات") ||
+question.includes("النظام") ||
+question.includes("الأنظمة")
 
-// الدعم
-else if(question.includes("دعم")){
-a="طلب الدعم يكون حسب البروتوكولات العسكرية.";
-}
+// اللبس
+question.includes("اللبس") ||
+question.includes("الزي") ||
+question.includes("الزي الرسمي") ||
+question.includes("الملابس") ||
+question.includes("اللباس")
 
-// التقرير
-else if(question.includes("تقرير")){
-a="يتم رفع التقرير إلى المشرف المباشر.";
-}
-
-// الأكواد
-else if(question.includes("اكواد") || question.includes("الأكواد")){
-a="راجع صفحة الأكواد داخل التطبيق.";
-}
-
-// البنك
-else if(question.includes("بنك") || question.includes("اقتحام")){
-a="تبدأ العملية بعد إذن المسؤول مع أخذ الحيطة والحذر وتجهيز الخطة.";
-}
+// الجدول
+question.includes("الجدول") ||
+question.includes("جدول السوات") ||
+question.includes("جدول") ||
+question.includes("الأعضاء") ||
+question.includes("الاعضاء")
 
 // المطلوبين
-else if(question.includes("مطلوب")){
-a="إضافة المطلوبين تتم من صفحة المطلوبين.";
-}
+question.includes("المطلوبين") ||
+question.includes("مطلوب") ||
+question.includes("قائمة المطلوبين") ||
+question.includes("اضافة مطلوب") ||
+question.includes("إضافة مطلوب")
 
+// التقارير
+question.includes("تقرير") ||
+question.includes("التقرير") ||
+question.includes("رفع تقرير") ||
+question.includes("كتابة تقرير") ||
+question.includes("كيف اكتب تقرير")
+
+// الترقية
+question.includes("ترقية") ||
+question.includes("الترقية") ||
+question.includes("كيف اترقى") ||
+question.includes("كيف أترقى") ||
+question.includes("الترقيات") ||
+question.includes("ابي ترقية")
+
+// الدعم
+question.includes("دعم") ||
+question.includes("طلب دعم") ||
+question.includes("تعزيز") ||
+question.includes("backup") ||
+question.includes("باك اب")
+
+// الأكواد
+question.includes("اكواد") ||
+question.includes("الأكواد") ||
+question.includes("الكود") ||
+question.includes("الكودات") ||
+question.includes("codes")
+
+// الاقتحام
+question.includes("اقتحام") ||
+question.includes("مداهمة") ||
+question.includes("مداهمه") ||
+question.includes("raid") ||
+question.includes("بنك") ||
+question.includes("اقتحام بنك")
+
+// التدريب
+question.includes("تدريب") ||
+question.includes("التدريب") ||
+question.includes("متى التدريب") ||
+question.includes("موعد التدريب")
+
+// الأسلحة
+question.includes("السلاح") ||
+question.includes("الاسلحة") ||
+question.includes("الأسلحة") ||
+question.includes("وش السلاح") ||
+question.includes("التسليح")
+
+// المركبات
+question.includes("السيارات") ||
+question.includes("المركبات") ||
+question.includes("سيارات السوات") ||
+question.includes("سيارة") ||
+question.includes("المركبة")
+
+// التواصل
+question.includes("اتصال") ||
+question.includes("التواصل") ||
+question.includes("الراديو") ||
+question.includes("اللاسلكي") ||
+question.includes("التردد")
+
+// الانضمام
+question.includes("انضمام") ||
+question.includes("كيف انضم") ||
+question.includes("كيف ادخل السوات") ||
+question.includes("التقديم") ||
+question.includes("التوظيف")
+
+// الشكر
+question.includes("شكرا") ||
+question.includes("شكراً") ||
+question.includes("مشكور") ||
+question.includes("تسلم") ||
+question.includes("يعطيك العافية") ||
+question.includes("بيض الله وجهك")
+
+    
 chat.innerHTML += `
 <div style="text-align:left;margin:10px 0;">
 <b style="color:#d8c27a;">SWAT AI:</b><br>${a}
