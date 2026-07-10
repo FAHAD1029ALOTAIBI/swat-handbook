@@ -639,6 +639,15 @@ chat.scrollTop = chat.scrollHeight;
 document.getElementById("userQuestion").value="";
 
 }
+    function clearChat(){
+
+    if(confirm("هل تريد حذف جميع المحادثة؟")){
+
+        document.getElementById("chatBox").innerHTML = "";
+
+    }
+
+}
 </script>
 </div>
 
