@@ -185,6 +185,8 @@ ol{
 <button onclick="show('schedule')">📅 جدول SWAT</button>
 
 <button onclick="show('wantedLogin')">🚨 المطلوبين</button>    
+
+<button onclick="show('aiPage')">🤖 اسألني</button>
 </div>
 
 <div id="rules" class="page">
@@ -483,7 +485,7 @@ function displayWanted(){
         card.style.padding = "15px";
         card.style.marginTop = "15px";
 
-        card.innerHTML = `
+        card.innerHTML = 
         <h3 style="color:#d8c27a;">${item.name}</h3>
         <p>التهمة: ${item.crime}</p>
 
@@ -491,7 +493,7 @@ function displayWanted(){
         style="background:#542b2b;color:white;margin-top:10px;">
         حذف المطلوب
         </button>
-        `;
+        ;
 
         list.appendChild(card);
 
@@ -534,12 +536,222 @@ document.getElementById("addWanted").addEventListener("click", function(){
 
 displayWanted();
     
+function askAI(){
 
-chat.innerHTML += `
+const q = document.getElementById("userQuestion").value.trim();
+if(q==="") return;
+
+const question = q.toLowerCase();
+const chat = document.getElementById("chatBox");
+
+chat.innerHTML += 
+<div style="text-align:right;margin:10px 0;">
+<b style="color:#4da3ff;">أنت:</b><br>${q}
+</div>
+;
+
+let a="❌ لا توجد معلومات مسجلة عن ذلك.";
+
+
+// التحية
+question.includes("السلام عليكم") ||
+question.includes("سلام") ||
+question.includes("هلا") ||
+question.includes("مرحبا") ||
+question.includes("أهلا") ||
+question.includes("اهلا") ||
+question.includes("هاي") ||
+question.includes("صباح الخير") ||
+question.includes("مساء الخير")
+
+// قائد SWAT
+question.includes("قائد") ||
+question.includes("القائد") ||
+question.includes("قائد السوات") ||
+question.includes("من قائد السوات") ||
+question.includes("من قائد swat") ||
+question.includes("قائد swat") ||
+question.includes("رئيس السوات")
+
+// نائب قائد SWAT
+question.includes("النائب") ||
+question.includes("من النائب") ||
+question.includes("نائب السوات") ||
+question.includes("نائب قائد السوات") ||
+question.includes("نائب قائد swat") ||
+question.includes("من نائب السوات") ||
+question.includes("نائب swat")
+
+// رئيس LSPD
+question.includes("رئيس lspd") ||
+question.includes("من رئيس lspd") ||
+question.includes("رئيس الشرطة") ||
+question.includes("رئيس الشرطه") ||
+question.includes("من رئيس الشرطة") ||
+question.includes("من رئيس الشرطه") ||
+question.includes("قيادة الشرطة") ||
+question.includes("قيادة lspd")
+
+// نائب رئيس LSPD
+question.includes("نائب رئيس lspd") ||
+question.includes("من نائب رئيس lspd") ||
+question.includes("نائب الشرطة") ||
+question.includes("نائب رئيس الشرطة") ||
+question.includes("نائب رئيس الشرطه") ||
+question.includes("من نائب الشرطة") ||
+question.includes("نائب lspd")
+
+// المشرفين
+question.includes("المشرف") ||
+question.includes("المشرفين") ||
+question.includes("من المشرف") ||
+question.includes("supervisor")
+
+// فريق Alpha
+question.includes("الفا") ||
+question.includes("alpha") ||
+question.includes("اعضاء alpha") ||
+question.includes("أعضاء alpha") ||
+question.includes("فريق alpha") ||
+question.includes("وحدة alpha")
+
+// فريق Bravo
+question.includes("برافو") ||
+question.includes("bravo") ||
+question.includes("اعضاء bravo") ||
+question.includes("أعضاء bravo") ||
+question.includes("فريق bravo") ||
+question.includes("وحدة bravo")
+
+// عدد الأعضاء
+question.includes("كم عضو") ||
+question.includes("عدد الاعضاء") ||
+question.includes("عدد الأعضاء") ||
+question.includes("كم عدد الاعضاء") ||
+question.includes("كم عدد الأعضاء") ||
+question.includes("عدد الفريق")
+
+// الرتب
+question.includes("الرتب") ||
+question.includes("رتب") ||
+question.includes("رتب السوات") ||
+question.includes("رتبة") ||
+question.includes("rank") ||
+question.includes("الرانكات")
+
+// القوانين
+question.includes("القوانين") ||
+question.includes("قوانين") ||
+question.includes("قوانين السوات") ||
+question.includes("النظام") ||
+question.includes("الأنظمة")
+
+// اللبس
+question.includes("اللبس") ||
+question.includes("الزي") ||
+question.includes("الزي الرسمي") ||
+question.includes("الملابس") ||
+question.includes("اللباس")
+
+// الجدول
+question.includes("الجدول") ||
+question.includes("جدول السوات") ||
+question.includes("جدول") ||
+question.includes("الأعضاء") ||
+question.includes("الاعضاء")
+
+// المطلوبين
+question.includes("المطلوبين") ||
+question.includes("مطلوب") ||
+question.includes("قائمة المطلوبين") ||
+question.includes("اضافة مطلوب") ||
+question.includes("إضافة مطلوب")
+
+// التقارير
+question.includes("تقرير") ||
+question.includes("التقرير") ||
+question.includes("رفع تقرير") ||
+question.includes("كتابة تقرير") ||
+question.includes("كيف اكتب تقرير")
+
+// الترقية
+question.includes("ترقية") ||
+question.includes("الترقية") ||
+question.includes("كيف اترقى") ||
+question.includes("كيف أترقى") ||
+question.includes("الترقيات") ||
+question.includes("ابي ترقية")
+
+// الدعم
+question.includes("دعم") ||
+question.includes("طلب دعم") ||
+question.includes("تعزيز") ||
+question.includes("backup") ||
+question.includes("باك اب")
+
+// الأكواد
+question.includes("اكواد") ||
+question.includes("الأكواد") ||
+question.includes("الكود") ||
+question.includes("الكودات") ||
+question.includes("codes")
+
+// الاقتحام
+question.includes("اقتحام") ||
+question.includes("مداهمة") ||
+question.includes("مداهمه") ||
+question.includes("raid") ||
+question.includes("بنك") ||
+question.includes("اقتحام بنك")
+
+// التدريب
+question.includes("تدريب") ||
+question.includes("التدريب") ||
+question.includes("متى التدريب") ||
+question.includes("موعد التدريب")
+
+// الأسلحة
+question.includes("السلاح") ||
+question.includes("الاسلحة") ||
+question.includes("الأسلحة") ||
+question.includes("وش السلاح") ||
+question.includes("التسليح")
+
+// المركبات
+question.includes("السيارات") ||
+question.includes("المركبات") ||
+question.includes("سيارات السوات") ||
+question.includes("سيارة") ||
+question.includes("المركبة")
+
+// التواصل
+question.includes("اتصال") ||
+question.includes("التواصل") ||
+question.includes("الراديو") ||
+question.includes("اللاسلكي") ||
+question.includes("التردد")
+
+// الانضمام
+question.includes("انضمام") ||
+question.includes("كيف انضم") ||
+question.includes("كيف ادخل السوات") ||
+question.includes("التقديم") ||
+question.includes("التوظيف")
+
+// الشكر
+question.includes("شكرا") ||
+question.includes("شكراً") ||
+question.includes("مشكور") ||
+question.includes("تسلم") ||
+question.includes("يعطيك العافية") ||
+question.includes("بيض الله وجهك")
+
+    
+chat.innerHTML += 
 <div style="text-align:left;margin:10px 0;">
 <b style="color:#d8c27a;">SWAT AI:</b><br>${a}
 </div>
-`;
+;
 
 chat.scrollTop = chat.scrollHeight;
 
