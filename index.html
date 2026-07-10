@@ -200,7 +200,6 @@ margin-top: 5px;
 .badge-fail { background: #b71c1c; color: #fff; border: 1px solid #f44336; }
 .badge-pending { background: #e65100; color: #fff; border: 1px solid #ff9800; }
 
-/* أزرار التحكم بالترشيحات */
 .btn-group {
 display: flex;
 gap: 10px;
@@ -434,18 +433,19 @@ margin-top: 15px;
         <button class="back" onclick="show('reports')">رجوع</button>
     </div>
 
-    <!-- [ميزتك الجديدة 1] شاشة تقديم الترشيح - عامة للجميع -->
+    <!-- شاشة تقديم الترشيح - مع إضافة حقل المُرشِّح -->
     <div id="submitNomination" class="page">
         <h1>🗳️ ترشيح عضو للانضمام لـ SWAT</h1>
         <p style="text-align:center;margin-bottom:20px;color:#ccc;">يمكن لجميع العساكر ترشيح الكفاءات من خارج أو داخل السلك.</p>
-        <input id="nomName" placeholder="👤 اسم الشخص المرشح">
+        <input id="nomByUser" placeholder="👮 اسم العسكري المُرشِّح (أنت)">
+        <input id="nomName" placeholder="👤 اسم الشخص المُرشَّح">
         <input id="nomRank" placeholder="🎖️ رتبته الحالية">
         <textarea id="nomReason" placeholder="📝 أسباب الترشيح ولماذا يستحق الانضمام؟" style="height:120px;"></textarea>
         <button onclick="saveNomination()">📤 إرسال طلب الترشيح</button>
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
-    <!-- [ميزتك الجديدة 2] قفل لوحة التحكم بالمرشحين -->
+    <!-- قفل لوحة التحكم بالمرشحين -->
     <div id="nomineesLogin" class="page">
         <div class="login-box">
             <h1>🔒 تصريح دخول لوحة المرشحين</h1>
@@ -455,7 +455,7 @@ margin-top: 15px;
         </div>
     </div>
 
-    <!-- [ميزتك الجديدة 3] شاشة عرض وإدارة الترشيحات مع الأزرار الـ3 -->
+    <!-- شاشة عرض وإدارة الترشيحات الواردة -->
     <div id="nomineesList" class="page">
         <h1>📋 طلبات الترشيح الواردة</h1>
         <div id="nomineesContainer"><p style="text-align:center;color:#aaa;">لا توجد ترشيحات حالياً.</p></div>
@@ -469,7 +469,7 @@ margin-top: 15px;
 let wantedData = JSON.parse(localStorage.getItem("wanted")) || [];
 let reportsData = JSON.parse(localStorage.getItem("swat_reports")) || [];
 let missionsData = JSON.parse(localStorage.getItem("swat_missions")) || [];
-let nomineesData = JSON.parse(localStorage.getItem("swat_nominees")) || []; // قاعدة ترشيح جديدة
+let nomineesData = JSON.parse(localStorage.getItem("swat_nominees")) || [];
 
 function show(id){
     document.getElementById("home").style.display="none";
@@ -733,24 +733,26 @@ function deleteReport(index){
     }
 }
 
-// 🗳️ [أكواد نظام الترشيحات الجديد]
+// إدارة الترشيحات (محدثة لدعم اسم المُرشِّح)
 function saveNomination(){
+    let byUser = document.getElementById("nomByUser").value.trim();
     let name = document.getElementById("nomName").value.trim();
     let rank = document.getElementById("nomRank").value.trim();
     let reason = document.getElementById("nomReason").value.trim();
 
-    if(!name || !rank || !reason){
-        alert("❌ الرجاء ملء جميع حقول الترشيح!");
+    if(!byUser || !name || !rank || !reason){
+        alert("❌ الرجاء ملء جميع حقول الترشيح بما فيها اسمك!");
         return;
     }
 
     nomineesData.push({
-        name: name, rank: rank, reason: reason, status: "pending" // الحالة التلقائية (قيد الانتظار)
+        byUser: byUser, name: name, rank: rank, reason: reason, status: "pending"
     });
 
     localStorage.setItem("swat_nominees", JSON.stringify(nomineesData));
     alert("تم إرسال ترشيحك بنجاح للقادة! 📥👍");
     
+    document.getElementById("nomByUser").value = "";
     document.getElementById("nomName").value = "";
     document.getElementById("nomRank").value = "";
     document.getElementById("nomReason").value = "";
@@ -780,7 +782,8 @@ function displayNominees(){
         container.innerHTML += `
             <div class="nominee-card" style="border-color: ${cardBorderColor};">
                 <h3 style="color:#d8c27a;">المرشح: ${nom.name} <span class="badge ${badgeClass}">${badgeText}</span></h3>
-                <p style="margin-top:5px;"><b>🎖️ الرتبة الحالية:</b> ${nom.rank}</p>
+                <p style="margin-top:5px; color:#8fa3b4;"><b>👮 تم الترشيح بواسطة:</b> ${nom.byUser}</p>
+                <p><b>🎖️ الرتبة الحالية للشخص:</b> ${nom.rank}</p>
                 <p style="margin-top:8px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 سبب الترشيح والكفاءة:</b>\n${nom.reason}</p>
                 
                 <div class="btn-group">
