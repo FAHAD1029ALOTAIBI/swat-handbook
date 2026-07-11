@@ -187,6 +187,18 @@ padding:15px;
 margin-top:15px;
 transition: border-color 0.3s;
 }
+
+.status-btn-container {
+display: flex;
+gap: 10px;
+margin-top: 15px;
+}
+
+.status-btn-container button {
+padding: 8px;
+font-size: 14px;
+margin: 0;
+}
 </style>
 </head>
 
@@ -228,7 +240,7 @@ transition: border-color 0.3s;
             <li>الالتزام بالحضور في الوقت المحدد لجميع الاصطفافات.</li>
             <li>يمنع استخدام مركبات أو معدات SWAT لأغراض شخصية.</li>
             <li>أي مخالفة تعرض العضو للمساءلة والعقوبات الإدارية.</li>
-            <li>احترامه جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
+            <li>احترام جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
             <li>شعار الفرقة: الانضباط - السرية - التنفيذ.</li>
         </ol>
         <button class="back" onclick="home()">رجوع</button>
@@ -295,8 +307,15 @@ transition: border-color 0.3s;
     <div id="missionsDashboard" class="page">
         <h1>🎯 قسم المهمات العسكرية</h1>
         <input id="missionTitle" placeholder="عنوان المهمة (مثال: تأمين البنك)">
-        <textarea id="missionDesc" placeholder="تفاصيل وتوجيهات المهمة..." style="height:100px;"></textarea>
-        <button id="addMission">➕ إضافة مهمة جديدة</button>
+        <input id="missionLeader" placeholder="👮 قائد المهمة">
+        <input id="missionMembers" placeholder="👥 المشاركون في المهمة">
+        <select id="missionStatus">
+            <option value="ناجحة">✅ مهمة ناجحة</option>
+            <option value="فاشلة">❌ مهمة فاشلة</option>
+            <option value="مستمرة">⏳ مهمة مستمرة / نشطة</option>
+        </select>
+        <textarea id="missionDesc" placeholder="📝 تفاصيل ووش المهمة المطلوبة بالضبط..." style="height:100px;"></textarea>
+        <button id="addMission">➕ إضافة المهمة وتوثيقها</button>
         <button onclick="show('missionsListLogin')" style="background:#202934; color:#d8c27a; border-color:#d8c27a;">🔒 استعراض وعرض المهمات</button>
         <button class="back" onclick="home()">رجوع</button>
     </div>
@@ -313,7 +332,7 @@ transition: border-color 0.3s;
 
     <!-- شاشة عرض المهمات المحمية -->
     <div id="missionsListSelf" class="page">
-        <h1>📋 قائمة المهمات النشطة</h1>
+        <h1>📋 قائمة المهمات الموثقة والنشطة</h1>
         <div id="missionsList"></div>
         <button class="back" onclick="show('missionsDashboard')">رجوع</button>
     </div>
@@ -321,9 +340,10 @@ transition: border-color 0.3s;
     <!-- لوحة التحكم بالترشيحات (بدون رمز) -->
     <div id="nominationsDashboard" class="page">
         <h1>🎖️ قسم الترشيحات والترقيات</h1>
-        <input id="nomineeName" placeholder="اسم العضو المرشح">
-        <input id="nomineeRank" placeholder="الرتبة المقترحة">
-        <textarea id="nominationReason" placeholder="سبب الترشيح..." style="height:100px;"></textarea>
+        <input id="nomineeCharName" placeholder="👤 اسم شخصية العضو المرشح">
+        <input id="nomineeCurrentRank" placeholder="🎖️ رتبته في العسكرية الآن">
+        <input id="nomineeSector" placeholder="🏢 في أي قطاع؟">
+        <textarea id="nominationReason" placeholder="📝 سبب ترشيحه..." style="height:100px;"></textarea>
         <button id="addNomination">➕ تقديم ترشيح جديد</button>
         <button onclick="show('nominationsListLogin')" style="background:#202934; color:#d8c27a; border-color:#d8c27a;">🔒 استعراض وعرض المرشحين</button>
         <button class="back" onclick="home()">رجوع</button>
@@ -341,7 +361,7 @@ transition: border-color 0.3s;
 
     <!-- شاشة عرض المرشحين المحمية -->
     <div id="nominationsListSelf" class="page">
-        <h1>📋 قائمة الأعضاء المرشحين للترقية</h1>
+        <h1>📋 قائمة الأعضاء المرشحين والقرارات الإدارية</h1>
         <div id="nominationsList"></div>
         <button class="back" onclick="show('nominationsDashboard')">رجوع</button>
     </div>
@@ -420,7 +440,7 @@ transition: border-color 0.3s;
 <!-- استدعاء مكتبات Firebase السحابية -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // كود التكوين الخاص بقاعدتك
 const firebaseConfig = {
@@ -437,7 +457,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ربط الدوال بالويندوز عشان تشتغل بأزرار الـ HTML القديمة بدون مشاكل
+// ربط الدوال بالويندوز
 window.show = show;
 window.home = home;
 window.checkWantedPassword = checkWantedPassword;
@@ -448,6 +468,7 @@ window.checkSecretPassword = checkSecretPassword;
 window.deleteWanted = deleteWanted;
 window.deleteMission = deleteMission;
 window.deleteNomination = deleteNomination;
+window.updateNominationStatus = updateNominationStatus;
 window.clearReportForm = clearReportForm;
 window.saveReport = saveReport;
 window.deleteReport = deleteReport;
@@ -550,17 +571,25 @@ onSnapshot(collection(db, "missions"), (snapshot) => {
     let list = document.getElementById("missionsList");
     list.innerHTML = "";
     if(snapshot.empty) {
-        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا توجد مهمات نشطة حالياً.</p>';
+        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا توجد مهمات مسجلة حالياً.</p>';
         return;
     }
     snapshot.forEach((docSnap) => {
         let item = docSnap.data();
         let id = docSnap.id;
+        
+        let statusColor = "#d8c27a"; 
+        if(item.status === "ناجحة") statusColor = "#4caf50";
+        if(item.status === "فاشلة") statusColor = "#f44336";
+        
         let card = document.createElement("div");
         card.className = "mission-card";
         card.innerHTML = `
             <h3 style="color:#d8c27a;">🎯 ${item.title}</h3>
-            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;">${item.desc}</p>
+            <p style="margin:5px 0;"><b>👮 قائد المهمة:</b> ${item.leader}</p>
+            <p style="margin:5px 0;"><b>👥 المشاركون:</b> ${item.members || 'غير محدد'}</p>
+            <p style="margin:5px 0;"><b>📊 حالة المهمة:</b> <span style="color:${statusColor}; font-weight:bold;">${item.status}</span></p>
+            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 ووش المهمة:</b>\n${item.desc}</p>
             <button onclick="deleteMission('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;">حذف المهمة</button>
         `;
         list.appendChild(card);
@@ -569,23 +598,36 @@ onSnapshot(collection(db, "missions"), (snapshot) => {
 
 document.getElementById("addMission").onclick = async function(){
     let title = document.getElementById("missionTitle").value.trim();
+    let leader = document.getElementById("missionLeader").value.trim();
+    let members = document.getElementById("missionMembers").value.trim();
+    let status = document.getElementById("missionStatus").value;
     let desc = document.getElementById("missionDesc").value.trim();
-    if(title==="" || desc==="") { alert("الرجاء ملء جميع حقول المهمة"); return; }
+    
+    if(title==="" || leader==="" || desc==="") { alert("الرجاء ملء عنوان وقائد وتفاصيل المهمة"); return; }
     try {
-        await addDoc(collection(db, "missions"), { title: title, desc: desc });
-        alert("تمت إضافة المهمة بنجاح ✅");
+        await addDoc(collection(db, "missions"), { 
+            title: title, 
+            leader: leader, 
+            members: members, 
+            status: status, 
+            desc: desc 
+        });
+        alert("تم حفظ وتوثيق المهمة بنجاح ✅");
         document.getElementById("missionTitle").value = "";
+        document.getElementById("missionLeader").value = "";
+        document.getElementById("missionMembers").value = "";
         document.getElementById("missionDesc").value = "";
+        document.getElementById("missionStatus").selectedIndex = 0;
     } catch(e) { alert("حدث خطأ أثناء إضافة المهمة"); }
 };
 
 async function deleteMission(id){
-    if(confirm("هل تريد إزالة هذه المهمة؟")){
+    if(confirm("هل تريد إزالة هذه المهمة نهائياً؟")){
         await deleteDoc(doc(db, "missions", id));
     }
 }
 
-// 🎖️ مراقبة الترشيحات (Real-time السحابي)
+// 🎖️ مراقبة الترشيحات والقرارات (Real-time السحابي)
 onSnapshot(collection(db, "nominations"), (snapshot) => {
     let list = document.getElementById("nominationsList");
     list.innerHTML = "";
@@ -596,34 +638,63 @@ onSnapshot(collection(db, "nominations"), (snapshot) => {
     snapshot.forEach((docSnap) => {
         let item = docSnap.data();
         let id = docSnap.id;
+        
+        let currentStatus = item.status || "قيد المراجعة";
+        let statusColor = "#ff9800";
+        if(currentStatus === "مقبول") statusColor = "#4caf50";
+        if(currentStatus === "مرفوض") statusColor = "#f44336";
+
         let card = document.createElement("div");
         card.className = "nomination-card";
         card.innerHTML = `
-            <h3 style="color:#d8c27a;">🎖️ المرشح: ${item.name}</h3>
-            <p style="margin:5px 0;"><b>الرتبة المقترحة:</b> ${item.rank}</p>
-            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>السبب:</b> ${item.reason}</p>
-            <button onclick="deleteNomination('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;">حذف الترشيح</button>
+            <h3 style="color:#d8c27a;">🎖️ المرشح: ${item.charName}</h3>
+            <p style="margin:5px 0;"><b>🎖️ الرتبة العسكرية الحالية:</b> ${item.currentRank}</p>
+            <p style="margin:5px 0;"><b>🏢 القطاع الحالي:</b> ${item.sector}</p>
+            <p style="margin:5px 0;"><b>📊 حالة القرار الإداري:</b> <span style="color:${statusColor}; font-weight:bold;">${currentStatus}</span></p>
+            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 سبب الترشيح:</b>\n${item.reason}</p>
+            
+            <div class="status-btn-container">
+                <button onclick="updateNominationStatus('${id}', 'مقبول')" style="background:#2e6930; color:white;">قبول ✅</button>
+                <button onclick="updateNominationStatus('${id}', 'قيد المراجعة')" style="background:#8c621f; color:white;">قيد المراجعة ⏳</button>
+                <button onclick="updateNominationStatus('${id}', 'مرفوض')" style="background:#7a2c2c; color:white;">رفض ❌</button>
+            </div>
+            <button onclick="deleteNomination('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;margin-top:15px;">🗑️ حذف الملف بالكامل</button>
         `;
         list.appendChild(card);
     });
 });
 
 document.getElementById("addNomination").onclick = async function(){
-    let name = document.getElementById("nomineeName").value.trim();
-    let rank = document.getElementById("nomineeRank").value.trim();
+    let charName = document.getElementById("nomineeCharName").value.trim();
+    let currentRank = document.getElementById("nomineeCurrentRank").value.trim();
+    let sector = document.getElementById("nomineeSector").value.trim();
     let reason = document.getElementById("nominationReason").value.trim();
-    if(name==="" || rank==="" || reason==="") { alert("الرجاء ملء بيانات الترشيح بالكامل"); return; }
+    
+    if(charName==="" || currentRank==="" || sector==="" || reason==="") { alert("الرجاء ملء بيانات الترشيح المطلوبة بالكامل"); return; }
     try {
-        await addDoc(collection(db, "nominations"), { name: name, rank: rank, reason: reason });
-        alert("تم تقديم ترشيحك بنجاح ✅");
-        document.getElementById("nomineeName").value = "";
-        document.getElementById("nomineeRank").value = "";
+        await addDoc(collection(db, "nominations"), { 
+            charName: charName, 
+            currentRank: currentRank, 
+            sector: sector, 
+            reason: reason,
+            status: "قيد المراجعة"
+        });
+        alert("تم تقديم ترشيح الشخصية بنجاح إلى الإدارة العليا ✅");
+        document.getElementById("nomineeCharName").value = "";
+        document.getElementById("nomineeCurrentRank").value = "";
+        document.getElementById("nomineeSector").value = "";
         document.getElementById("nominationReason").value = "";
     } catch(e) { alert("حدث خطأ أثناء تقديم الترشيح"); }
 };
 
+async function updateNominationStatus(id, newStatus) {
+    try {
+        await updateDoc(doc(db, "nominations", id), { status: newStatus });
+    } catch(e) { alert("فشل في تحديث حالة القرار بالسيرفر"); }
+}
+
 async function deleteNomination(id){
-    if(confirm("هل تريد إلغاء هذا الترشيح؟")){
+    if(confirm("هل تريد إلغاء وحذف هذا الملف نهائياً؟")){
         await deleteDoc(doc(db, "nominations", id));
     }
 }
