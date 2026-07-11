@@ -206,8 +206,8 @@ transition: border-color 0.3s;
         <button onclick="show('uniform')">👕 لبس SWAT</button>
         <button onclick="show('schedule')">📅 جدول SWAT</button>
         <button onclick="show('wantedLogin')">🚨 المطلوبين</button>
-        <button onclick="show('missionsLogin')">🎯 المهمات</button>
-        <button onclick="show('nominationsLogin')">🎖️ الترشيحات</button>
+        <button onclick="show('missionsDashboard')">🎯 قسم المهمات</button>
+        <button onclick="show('nominationsDashboard')">🎖️ قسم الترشيحات</button>
         <button onclick="show('reports')">📄 تقارير SWAT</button>
     </div>
 
@@ -228,7 +228,7 @@ transition: border-color 0.3s;
             <li>الالتزام بالحضور في الوقت المحدد لجميع الاصطفافات.</li>
             <li>يمنع استخدام مركبات أو معدات SWAT لأغراض شخصية.</li>
             <li>أي مخالفة تعرض العضو للمساءلة والعقوبات الإدارية.</li>
-            <li>احترم جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
+            <li>احترامه جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
             <li>شعار الفرقة: الانضباط - السرية - التنفيذ.</li>
         </ol>
         <button class="back" onclick="home()">رجوع</button>
@@ -291,45 +291,59 @@ transition: border-color 0.3s;
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
-    <!-- شاشة دخول المهمات -->
-    <div id="missionsLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 تصريح دخول المهمات</h1>
-            <input id="missionsPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkMissionsPassword()">دخول</button>
-            <button class="back" onclick="home()">رجوع</button>
-        </div>
-    </div>
-
-    <!-- شاشة المهمات -->
-    <div id="missions" class="page">
-        <h1>🎯 قائمة المهمات العسكرية</h1>
+    <!-- لوحة التحكم بالمهمات (بدون رمز) -->
+    <div id="missionsDashboard" class="page">
+        <h1>🎯 قسم المهمات العسكرية</h1>
         <input id="missionTitle" placeholder="عنوان المهمة (مثال: تأمين البنك)">
         <textarea id="missionDesc" placeholder="تفاصيل وتوجيهات المهمة..." style="height:100px;"></textarea>
         <button id="addMission">➕ إضافة مهمة جديدة</button>
-        <div id="missionsList"></div>
+        <button onclick="show('missionsListLogin')" style="background:#202934; color:#d8c27a; border-color:#d8c27a;">🔒 استعراض وعرض المهمات</button>
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
-    <!-- شاشة دخول الترشيحات -->
-    <div id="nominationsLogin" class="page">
+    <!-- قفل شاشة عرض المهمات -->
+    <div id="missionsListLogin" class="page">
         <div class="login-box">
-            <h1>🔒 تصريح دخول الترشيحات</h1>
-            <input id="nominationsPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkNominationsPassword()">دخول</button>
-            <button class="back" onclick="home()">رجوع</button>
+            <h1>🔒 تصريح عرض المهمات العسكرية</h1>
+            <input id="missionsViewPassword" type="password" placeholder="رمز الدخول">
+            <button onclick="checkMissionsViewPassword()">دخول</button>
+            <button class="back" onclick="show('missionsDashboard')">رجوع</button>
         </div>
     </div>
 
-    <!-- شاشة الترشيحات -->
-    <div id="nominations" class="page">
+    <!-- شاشة عرض المهمات المحمية -->
+    <div id="missionsListSelf" class="page">
+        <h1>📋 قائمة المهمات النشطة</h1>
+        <div id="missionsList"></div>
+        <button class="back" onclick="show('missionsDashboard')">رجوع</button>
+    </div>
+
+    <!-- لوحة التحكم بالترشيحات (بدون رمز) -->
+    <div id="nominationsDashboard" class="page">
         <h1>🎖️ قسم الترشيحات والترقيات</h1>
         <input id="nomineeName" placeholder="اسم العضو المرشح">
         <input id="nomineeRank" placeholder="الرتبة المقترحة">
         <textarea id="nominationReason" placeholder="سبب الترشيح..." style="height:100px;"></textarea>
-        <button id="addNomination">➕ تقديم ترشيح</button>
-        <div id="nominationsList"></div>
+        <button id="addNomination">➕ تقديم ترشيح جديد</button>
+        <button onclick="show('nominationsListLogin')" style="background:#202934; color:#d8c27a; border-color:#d8c27a;">🔒 استعراض وعرض المرشحين</button>
         <button class="back" onclick="home()">رجوع</button>
+    </div>
+
+    <!-- قفل شاشة عرض المرشحين -->
+    <div id="nominationsListLogin" class="page">
+        <div class="login-box">
+            <h1>🔒 تصريح عرض قائمة المرشحين</h1>
+            <input id="nominationsViewPassword" type="password" placeholder="رمز الدخول">
+            <button onclick="checkNominationsViewPassword()">دخول</button>
+            <button class="back" onclick="show('nominationsDashboard')">رجوع</button>
+        </div>
+    </div>
+
+    <!-- شاشة عرض المرشحين المحمية -->
+    <div id="nominationsListSelf" class="page">
+        <h1>📋 قائمة الأعضاء المرشحين للترقية</h1>
+        <div id="nominationsList"></div>
+        <button class="back" onclick="show('nominationsDashboard')">رجوع</button>
     </div>
 
     <!-- قسم التقارير الرئيسي -->
@@ -427,8 +441,8 @@ const db = getFirestore(app);
 window.show = show;
 window.home = home;
 window.checkWantedPassword = checkWantedPassword;
-window.checkMissionsPassword = checkMissionsPassword;
-window.checkNominationsPassword = checkNominationsPassword;
+window.checkMissionsViewPassword = checkMissionsViewPassword;
+window.checkNominationsViewPassword = checkNominationsViewPassword;
 window.checkReportsPassword = checkReportsPassword;
 window.checkSecretPassword = checkSecretPassword;
 window.deleteWanted = deleteWanted;
@@ -460,19 +474,19 @@ function checkWantedPassword(){
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
-function checkMissionsPassword(){
-    let pass=document.getElementById("missionsPassword").value;
+function checkMissionsViewPassword(){
+    let pass=document.getElementById("missionsViewPassword").value;
     if(pass==="1029"){
-        document.getElementById("missionsPassword").value="";
-        show("missions");
+        document.getElementById("missionsViewPassword").value="";
+        show("missionsListSelf");
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
-function checkNominationsPassword(){
-    let pass=document.getElementById("nominationsPassword").value;
+function checkNominationsViewPassword(){
+    let pass=document.getElementById("nominationsViewPassword").value;
     if(pass==="1029"){
-        document.getElementById("nominationsPassword").value="";
-        show("nominations");
+        document.getElementById("nominationsViewPassword").value="";
+        show("nominationsListSelf");
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
@@ -559,6 +573,7 @@ document.getElementById("addMission").onclick = async function(){
     if(title==="" || desc==="") { alert("الرجاء ملء جميع حقول المهمة"); return; }
     try {
         await addDoc(collection(db, "missions"), { title: title, desc: desc });
+        alert("تمت إضافة المهمة بنجاح ✅");
         document.getElementById("missionTitle").value = "";
         document.getElementById("missionDesc").value = "";
     } catch(e) { alert("حدث خطأ أثناء إضافة المهمة"); }
@@ -600,6 +615,7 @@ document.getElementById("addNomination").onclick = async function(){
     if(name==="" || rank==="" || reason==="") { alert("الرجاء ملء بيانات الترشيح بالكامل"); return; }
     try {
         await addDoc(collection(db, "nominations"), { name: name, rank: rank, reason: reason });
+        alert("تم تقديم ترشيحك بنجاح ✅");
         document.getElementById("nomineeName").value = "";
         document.getElementById("nomineeRank").value = "";
         document.getElementById("nominationReason").value = "";
