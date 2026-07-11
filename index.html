@@ -179,7 +179,7 @@ line-height:2;
 padding-right:25px;
 }
 
-.report-card, .wanted-card, .mission-card, .nominee-card {
+.report-card, .wanted-card {
 background:#1b232d;
 border:1px solid #3d4b59;
 border-radius:10px;
@@ -187,30 +187,6 @@ padding:15px;
 margin-top:15px;
 transition: border-color 0.3s;
 }
-
-.badge {
-display: inline-block;
-padding: 5px 12px;
-border-radius: 20px;
-font-weight: bold;
-font-size: 14px;
-margin-top: 5px;
-}
-.badge-success { background: #1b5e20; color: #fff; border: 1px solid #4caf50; }
-.badge-fail { background: #b71c1c; color: #fff; border: 1px solid #f44336; }
-.badge-pending { background: #e65100; color: #fff; border: 1px solid #ff9800; }
-
-.btn-group {
-display: flex;
-gap: 10px;
-margin-top: 15px;
-}
-.btn-accept { background: #1b5e20; color: white; border: 1px solid #4caf50; padding: 10px; }
-.btn-accept:hover { background: #2e7d32; }
-.btn-review { background: #e65100; color: white; border: 1px solid #ff9800; padding: 10px; }
-.btn-review:hover { background: #ef6c00; }
-.btn-reject { background: #b71c1c; color: white; border: 1px solid #f44336; padding: 10px; }
-.btn-reject:hover { background: #c62828; }
 </style>
 </head>
 
@@ -229,11 +205,8 @@ margin-top: 15px;
         <button onclick="show('rules')">📋 قوانين SWAT</button>
         <button onclick="show('uniform')">👕 لبس SWAT</button>
         <button onclick="show('schedule')">📅 جدول SWAT</button>
-        <button onclick="show('missionsDashboard')">🎯 مهمات SWAT</button>
         <button onclick="show('wantedLogin')">🚨 المطلوبين</button>
         <button onclick="show('reports')">📄 تقارير SWAT</button>
-        <button onclick="show('submitNomination')" style="color: #4caf50; border-color: #4caf50;">🗳️ ترشيح عضو جديد (عام)</button>
-        <button onclick="show('nomineesLogin')" style="color: #ff9800; border-color: #ff9800;">📋 عرض وإدارة المرشحين (🔒)</button>
     </div>
 
     <!-- شاشة القوانين -->
@@ -294,54 +267,6 @@ margin-top: 15px;
             </table>
         </div>
         <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- قسم المهمات الرئيسي -->
-    <div id="missionsDashboard" class="page">
-        <h1>🎯 مهمات SWAT</h1>
-        <p style="text-align:center;margin:20px 0;color:#ccc;">قسم رصد ومتابعة نتائج العمليات الميدانية للفرقة.</p>
-        <button onclick="show('createMission')">➕ رصد مهمة جديدة</button>
-        <button onclick="show('missionsListLogin')">📂 عرض سجل المهمات (🔒 مقفل)</button>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- شاشة قفل سجل المهمات -->
-    <div id="missionsListLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 تصريح دخول سجل المهمات</h1>
-            <input id="missionsPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkMissionsPassword()">دخول</button>
-            <button class="back" onclick="show('missionsDashboard')">رجوع</button>
-        </div>
-    </div>
-
-    <!-- شاشة إنشاء مهمة -->
-    <div id="createMission" class="page">
-        <h1>🎯 رصد مهمة جديدة</h1>
-        <input id="misId" placeholder="🆔 رقم أو رمز المهمة">
-        <input id="misDate" type="date">
-        <input id="misTime" type="time">
-        <input id="misLeader" placeholder="👮 قائد المهمة">
-        <input id="misMembers" placeholder="👥 الأعضاء المشاركين">
-        <input id="misLocation" placeholder="📍 موقع حدوث المهمة">
-        <input id="misCriminals" placeholder="🦹 المجرمين المتسببين (أسماء أو عصابة)">
-        
-        <select id="misResult">
-            <option value="success">🟢 عملية ناجحة</option>
-            <option value="fail">🔴 عملية فاشلة</option>
-        </select>
-
-        <textarea id="misDetails" placeholder="📝 تفاصيل وأحداث المهمة كاملة" style="height:150px;"></textarea>
-        
-        <button onclick="saveMission()">💾 حفظ المهمة في السجل</button>
-        <button class="back" onclick="clearMissionForm(); show('missionsDashboard');">رجوع</button>
-    </div>
-
-    <!-- شاشة عرض سجل المهمات -->
-    <div id="missionsList" class="page">
-        <h1>📂 سجل المهمات المرصودة</h1>
-        <div id="missionsContainer"><p style="text-align:center;color:#aaa;">لا توجد مهمات مسجلة حالياً.</p></div>
-        <button class="back" onclick="show('missionsDashboard')">رجوع</button>
     </div>
 
     <!-- شاشة دخول المطلوبين -->
@@ -433,46 +358,12 @@ margin-top: 15px;
         <button class="back" onclick="show('reports')">رجوع</button>
     </div>
 
-    <!-- شاشة تقديم الترشيح -->
-    <div id="submitNomination" class="page">
-        <h1>🗳️ ترشيح عضو للانضمام لـ SWAT</h1>
-        <p style="text-align:center;margin-bottom:20px;color:#ccc;">يمكن لجميع العساكر ترشيح الكفاءات من خارج أو داخل السلك.</p>
-        <input id="nomByUser" placeholder="👮 اسم العسكري المُرشِّح (أنت)">
-        <input id="nomName" placeholder="👤 اسم الشخص المُرشَّح">
-        <input id="nomRank" placeholder="🎖️ رتبته الحالية">
-        <textarea id="nomReason" placeholder="📝 أسباب الترشيح ولماذا يستحق الانضمام؟" style="height:120px;"></textarea>
-        <button onclick="saveNomination()">📤 إرسال طلب الترشيح</button>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- قفل لوحة التحكم بالمرشحين -->
-    <div id="nomineesLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 تصريح دخول لوحة المرشحين</h1>
-            <input id="nomineesPassword" type="password" placeholder="رمز الدخول الخاص بالقادة">
-            <button onclick="checkNomineesPassword()">دخول</button>
-            <button class="back" onclick="home()">رجوع</button>
-        </div>
-    </div>
-
-    <!-- شاشة عرض وإدارة الترشيحات الواردة -->
-    <div id="nomineesList" class="page">
-        <h1>📋 طلبات الترشيح الواردة</h1>
-        <div id="nomineesContainer"><p style="text-align:center;color:#aaa;">لا توجد ترشيحات حالياً في النظام.</p></div>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
 </div>
 
 <script>
-// ⚠️ حط رابط الـ Webhook الفعلي حق الروم حقك هنا بالأسفل بين علامتي التنصيص:
-const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1525308290924281938/xxxxxx";
-
 // قاعدة البيانات المحلية
 let wantedData = JSON.parse(localStorage.getItem("wanted")) || [];
 let reportsData = JSON.parse(localStorage.getItem("swat_reports")) || [];
-let missionsData = JSON.parse(localStorage.getItem("swat_missions")) || [];
-let nomineesData = JSON.parse(localStorage.getItem("swat_nominees")) || [];
 
 function show(id){
     document.getElementById("home").style.display="none";
@@ -511,24 +402,6 @@ function checkSecretPassword(){
         document.getElementById("secretPassword").value="";
         displayReports();
         show("secretReports");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-function checkMissionsPassword(){
-    let pass=document.getElementById("missionsPassword").value;
-    if(pass==="1029"){
-        document.getElementById("missionsPassword").value="";
-        displayMissions();
-        show("missionsList");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-function checkNomineesPassword(){
-    let pass=document.getElementById("nomineesPassword").value;
-    if(pass==="1029"){
-        document.getElementById("nomineesPassword").value="";
-        displayNominees();
-        show("nomineesList");
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
@@ -572,84 +445,6 @@ document.getElementById("addWanted").onclick=function(){
     document.getElementById("wantedName").value="";
     document.getElementById("wantedCrime").value="";
 };
-
-// إدارة نظام المهمات
-function clearMissionForm(){
-    document.getElementById("misId").value="";
-    document.getElementById("misDate").value="";
-    document.getElementById("misTime").value="";
-    document.getElementById("misLeader").value="";
-    document.getElementById("misMembers").value="";
-    document.getElementById("misLocation").value="";
-    document.getElementById("misCriminals").value="";
-    document.getElementById("misResult").selectedIndex=0;
-    document.getElementById("misDetails").value="";
-}
-
-function saveMission(){
-    let id = document.getElementById("misId").value.trim();
-    let date = document.getElementById("misDate").value;
-    let time = document.getElementById("misTime").value;
-    let leader = document.getElementById("misLeader").value.trim();
-    let members = document.getElementById("misMembers").value.trim();
-    let location = document.getElementById("misLocation").value.trim();
-    let criminals = document.getElementById("misCriminals").value.trim();
-    let result = document.getElementById("misResult").value;
-    let details = document.getElementById("misDetails").value.trim();
-
-    if(!id || !date || !time || !leader || !criminals || !details){
-        alert("❌ الرجاء ملء الحقول الأساسية (الرقم، التاريخ، الوقت، القائد، المجرمين، التفاصيل)");
-        return;
-    }
-
-    missionsData.push({
-        id: id, date: date, time: time, leader: leader,
-        members: members, location: location, criminals: criminals,
-        result: result, details: details
-    });
-
-    localStorage.setItem("swat_missions", JSON.stringify(missionsData));
-    alert("تم حفظ ورصد المهمة بنجاح ✅");
-    clearMissionForm();
-    show("missionsDashboard");
-}
-
-function displayMissions(){
-    let container = document.getElementById("missionsContainer");
-    container.innerHTML = "";
-
-    if(missionsData.length === 0){
-        container.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد مهمات مسجلة في السجل حالياً.</p>';
-        return;
-    }
-
-    missionsData.forEach((mis, index) => {
-        let isSuccess = mis.result === "success";
-        let badgeClass = isSuccess ? "badge-success" : "badge-fail";
-        let badgeText = isSuccess ? "🟢 عملية ناجحة" : "🔴 عملية فاشلة";
-
-        container.innerHTML += `
-            <div class="mission-card">
-                <h3 style="color:#d8c27a;">مهمة رقم: ${mis.id} <span class="badge ${badgeClass}">${badgeText}</span></h3>
-                <p style="margin-top:8px;"><b>📅 وقت وتاريخ الحدوث:</b> ${mis.date} | ${mis.time}</p>
-                <p><b>📍 الموقع:</b> ${mis.location || 'غير محدد'}</p>
-                <p><b>👮 قائد المهمة:</b> ${mis.leader}</p>
-                <p><b>👥 المشاركون من السوات:</b> ${mis.members || 'لا يوجد'}</p>
-                <p style="color:#ff6b6b;"><b>🦹 المجرمين المتسببين:</b> ${mis.criminals}</p>
-                <p style="margin-top:10px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 تفاصيل المهمة:</b>\n${mis.details}</p>
-                <button onclick="deleteMission(${index})" style="background:#542b2b; color:white; padding:6px; font-size:13px; margin-top:10px; width:auto;">🗑️ حذف من السجل</button>
-            </div>
-        `;
-    });
-}
-
-function deleteMission(index){
-    if(confirm("هل أنت متأكد من حذف هذه المهمة من السجل؟")){
-        missionsData.splice(index, 1);
-        localStorage.setItem("swat_missions", JSON.stringify(missionsData));
-        displayMissions();
-    }
-}
 
 // إدارة التقارير
 function clearReportForm(){
@@ -733,113 +528,6 @@ function deleteReport(index){
         reportsData.splice(index, 1);
         localStorage.setItem("swat_reports", JSON.stringify(reportsData));
         displayReports();
-    }
-}
-
-// إدارة الترشيحات (مربوطة بالكامل مع ديسكورد)
-function saveNomination(){
-    let byUser = document.getElementById("nomByUser").value.trim();
-    let name = document.getElementById("nomName").value.trim();
-    let rank = document.getElementById("nomRank").value.trim();
-    let reason = document.getElementById("nomReason").value.trim();
-
-    if(!byUser || !name || !rank || !reason){
-        alert("❌ الرجاء ملء جميع حقول الترشيح بما فيها اسمك!");
-        return;
-    }
-
-    // 📡 كود إرسال إشعار فوري للديسكورد (Webhook)
-    if(DISCORD_WEBHOOK_URL && DISCORD_WEBHOOK_URL !== "") {
-        const discordPayload = {
-            username: "SWAT Nomination System",
-            avatar_url: "https://i.imgur.com/4M344Uq.png",
-            embeds: [{
-                title: "🗳️ طلب ترشيح جديد قيد الانتظار",
-                description: "تم تقديم ترشيح لعضو جديد من قبل أحد العساكر، يُرجى مراجعته من القادة واتخاذ الإجراء.",
-                color: 16753920, // لون برتقالي
-                fields: [
-                    { name: "👮 تم الترشيح بواسطة (العسكري):", value: `**${byUser}**`, inline: true },
-                    { name: "👤 اسم الشخص المُرشَّح:", value: `**${name}**`, inline: true },
-                    { name: "🎖️ رتبة المُرشَّح الحالية:", value: rank, inline: true },
-                    { name: "📝 أسباب الترشيح والكفاءة:", value: reason, inline: false },
-                    { name: "⚙️ إجراءات القادة السريعة:", value: `[✔ قبول المُرشَّح وتوجيهه](https://discord.com/channels/1525308198951846079/1525308290924281938) \n [✖ رفض الطلب وإغلاقه](https://discord.com/channels/1525308198951846079/1525308290924281938)`, inline: false }
-                ],
-                footer: { text: "نظام التوجيه والترشيح الذكي لـ SWAT" },
-                timestamp: new Date()
-            }]
-        };
-
-        fetch(DISCORD_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(discordPayload)
-        }).catch(err => console.log("خطأ في إرسال الديسكورد: ", err));
-    }
-
-    // حفظ البيانات محلياً في ملف المرشحين
-    nomineesData.push({
-        byUser: byUser, name: name, rank: rank, reason: reason, status: "pending"
-    });
-
-    localStorage.setItem("swat_nominees", JSON.stringify(nomineesData));
-    alert("تم إرسال ترشيحك بنجاح للقادة وللديسكورد! 📥📡✅");
-    
-    document.getElementById("nomByUser").value = "";
-    document.getElementById("nomName").value = "";
-    document.getElementById("nomRank").value = "";
-    document.getElementById("nomReason").value = "";
-    home();
-}
-
-function displayNominees(){
-    let container = document.getElementById("nomineesContainer");
-    container.innerHTML = "";
-
-    if(nomineesData.length === 0){
-        container.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد ترشيحات حالياً في النظام.</p>';
-        return;
-    }
-
-    nomineesData.forEach((nom, index) => {
-        let badgeClass = "badge-pending";
-        let badgeText = "🟡 تحت المراجعة";
-        let cardBorderColor = "#3d4b59";
-
-        if(nom.status === "accepted") {
-            badgeClass = "badge-success"; badgeText = "🟢 مقبول"; cardBorderColor = "#4caf50";
-        } else if(nom.status === "rejected") {
-            badgeClass = "badge-fail"; badgeText = "🔴 مرفوض"; cardBorderColor = "#f44336";
-        }
-
-        container.innerHTML += `
-            <div class="nominee-card" style="border-color: ${cardBorderColor};">
-                <h3 style="color:#d8c27a;">المرشح: ${nom.name} <span class="badge ${badgeClass}">${badgeText}</span></h3>
-                <p style="margin-top:5px; color:#8fa3b4;"><b>👮 تم الترشيح بواسطة:</b> ${nom.byUser}</p>
-                <p><b>🎖️ الرتبة الحالية للشخص:</b> ${nom.rank}</p>
-                <p style="margin-top:8px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 سبب الترشيح والكفاءة:</b>\n${nom.reason}</p>
-                
-                <div class="btn-group">
-                    <button class="btn-accept" onclick="updateNomineeStatus(${index}, 'accepted')">✔ قبول</button>
-                    <button class="btn-review" onclick="updateNomineeStatus(${index}, 'pending')">⏳ مراجعة</button>
-                    <button class="btn-reject" onclick="updateNomineeStatus(${index}, 'rejected')">✖ رفض</button>
-                    <button onclick="deleteNominee(${index})" style="background:#444; color:white; width:auto; padding:10px; margin:0;">🗑️ مسح</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-function updateNomineeStatus(index, newStatus){
-    nomineesData[index].status = newStatus;
-    localStorage.setItem("swat_nominees", JSON.stringify(nomineesData));
-    displayNominees();
-}
-
-function deleteNominee(index){
-    if(confirm("هل أنت متأكد من مسح طلب الترشيح هذا نهائياً؟")){
-        nomineesData.splice(index, 1);
-        localStorage.setItem("swat_nominees", JSON.stringify(nomineesData));
-        displayNominees();
     }
 }
 
