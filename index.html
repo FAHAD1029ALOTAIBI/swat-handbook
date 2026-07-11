@@ -179,7 +179,7 @@ line-height:2;
 padding-right:25px;
 }
 
-.report-card, .wanted-card {
+.report-card, .wanted-card, .mission-card, .nomination-card {
 background:#1b232d;
 border:1px solid #3d4b59;
 border-radius:10px;
@@ -206,6 +206,8 @@ transition: border-color 0.3s;
         <button onclick="show('uniform')">👕 لبس SWAT</button>
         <button onclick="show('schedule')">📅 جدول SWAT</button>
         <button onclick="show('wantedLogin')">🚨 المطلوبين</button>
+        <button onclick="show('missionsLogin')">🎯 المهمات</button>
+        <button onclick="show('nominationsLogin')">🎖️ الترشيحات</button>
         <button onclick="show('reports')">📄 تقارير SWAT</button>
     </div>
 
@@ -226,7 +228,7 @@ transition: border-color 0.3s;
             <li>الالتزام بالحضور في الوقت المحدد لجميع الاصطفافات.</li>
             <li>يمنع استخدام مركبات أو معدات SWAT لأغراض شخصية.</li>
             <li>أي مخالفة تعرض العضو للمساءلة والعقوبات الإدارية.</li>
-            <li>احترام جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
+            <li>احترم جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
             <li>شعار الفرقة: الانضباط - السرية - التنفيذ.</li>
         </ol>
         <button class="back" onclick="home()">رجوع</button>
@@ -286,6 +288,47 @@ transition: border-color 0.3s;
         <input id="wantedCrime" placeholder="التهمة">
         <button id="addWanted">➕ إضافة مطلوب</button>
         <div id="wantedList"></div>
+        <button class="back" onclick="home()">رجوع</button>
+    </div>
+
+    <!-- شاشة دخول المهمات -->
+    <div id="missionsLogin" class="page">
+        <div class="login-box">
+            <h1>🔒 تصريح دخول المهمات</h1>
+            <input id="missionsPassword" type="password" placeholder="رمز الدخول">
+            <button onclick="checkMissionsPassword()">دخول</button>
+            <button class="back" onclick="home()">رجوع</button>
+        </div>
+    </div>
+
+    <!-- شاشة المهمات -->
+    <div id="missions" class="page">
+        <h1>🎯 قائمة المهمات العسكرية</h1>
+        <input id="missionTitle" placeholder="عنوان المهمة (مثال: تأمين البنك)">
+        <textarea id="missionDesc" placeholder="تفاصيل وتوجيهات المهمة..." style="height:100px;"></textarea>
+        <button id="addMission">➕ إضافة مهمة جديدة</button>
+        <div id="missionsList"></div>
+        <button class="back" onclick="home()">رجوع</button>
+    </div>
+
+    <!-- شاشة دخول الترشيحات -->
+    <div id="nominationsLogin" class="page">
+        <div class="login-box">
+            <h1>🔒 تصريح دخول الترشيحات</h1>
+            <input id="nominationsPassword" type="password" placeholder="رمز الدخول">
+            <button onclick="checkNominationsPassword()">دخول</button>
+            <button class="back" onclick="home()">رجوع</button>
+        </div>
+    </div>
+
+    <!-- شاشة الترشيحات -->
+    <div id="nominations" class="page">
+        <h1>🎖️ قسم الترشيحات والترقيات</h1>
+        <input id="nomineeName" placeholder="اسم العضو المرشح">
+        <input id="nomineeRank" placeholder="الرتبة المقترحة">
+        <textarea id="nominationReason" placeholder="سبب الترشيح..." style="height:100px;"></textarea>
+        <button id="addNomination">➕ تقديم ترشيح</button>
+        <div id="nominationsList"></div>
         <button class="back" onclick="home()">رجوع</button>
     </div>
 
@@ -384,9 +427,13 @@ const db = getFirestore(app);
 window.show = show;
 window.home = home;
 window.checkWantedPassword = checkWantedPassword;
+window.checkMissionsPassword = checkMissionsPassword;
+window.checkNominationsPassword = checkNominationsPassword;
 window.checkReportsPassword = checkReportsPassword;
 window.checkSecretPassword = checkSecretPassword;
 window.deleteWanted = deleteWanted;
+window.deleteMission = deleteMission;
+window.deleteNomination = deleteNomination;
 window.clearReportForm = clearReportForm;
 window.saveReport = saveReport;
 window.deleteReport = deleteReport;
@@ -413,6 +460,22 @@ function checkWantedPassword(){
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
+function checkMissionsPassword(){
+    let pass=document.getElementById("missionsPassword").value;
+    if(pass==="1029"){
+        document.getElementById("missionsPassword").value="";
+        show("missions");
+    }else{ alert("❌ رمز الدخول غير صحيح"); }
+}
+
+function checkNominationsPassword(){
+    let pass=document.getElementById("nominationsPassword").value;
+    if(pass==="1029"){
+        document.getElementById("nominationsPassword").value="";
+        show("nominations");
+    }else{ alert("❌ رمز الدخول غير صحيح"); }
+}
+
 function checkReportsPassword(){
     let pass=document.getElementById("reportsPassword").value;
     if(pass==="1029"){
@@ -429,7 +492,7 @@ function checkSecretPassword(){
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
-// المراقبة المباشرة للمطلوبين من السيرفر (Real-time)
+// 🚨 مراقبة المطلوبين (Real-time السحابي)
 onSnapshot(collection(db, "wanted"), (snapshot) => {
     let list = document.getElementById("wantedList");
     list.innerHTML = "";
@@ -455,12 +518,11 @@ document.getElementById("addWanted").onclick = async function(){
     let name = document.getElementById("wantedName").value.trim();
     let crime = document.getElementById("wantedCrime").value.trim();
     if(name==="" || crime==="") { alert("الرجاء ملء جميع الحقول"); return; }
-    
     try {
         await addDoc(collection(db, "wanted"), { name: name, crime: crime });
         document.getElementById("wantedName").value = "";
         document.getElementById("wantedCrime").value = "";
-    } catch(e) { alert("حدث خطأ أثناء الإضافة بالسيرفر"); }
+    } catch(e) { alert("حدث خطأ أثناء الإضافة"); }
 };
 
 async function deleteWanted(id){
@@ -469,7 +531,88 @@ async function deleteWanted(id){
     }
 }
 
-// المراقبة المباشرة للتقارير من السيرفر (Real-time)
+// 🎯 مراقبة المهمات (Real-time السحابي)
+onSnapshot(collection(db, "missions"), (snapshot) => {
+    let list = document.getElementById("missionsList");
+    list.innerHTML = "";
+    if(snapshot.empty) {
+        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا توجد مهمات نشطة حالياً.</p>';
+        return;
+    }
+    snapshot.forEach((docSnap) => {
+        let item = docSnap.data();
+        let id = docSnap.id;
+        let card = document.createElement("div");
+        card.className = "mission-card";
+        card.innerHTML = `
+            <h3 style="color:#d8c27a;">🎯 ${item.title}</h3>
+            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;">${item.desc}</p>
+            <button onclick="deleteMission('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;">حذف المهمة</button>
+        `;
+        list.appendChild(card);
+    });
+});
+
+document.getElementById("addMission").onclick = async function(){
+    let title = document.getElementById("missionTitle").value.trim();
+    let desc = document.getElementById("missionDesc").value.trim();
+    if(title==="" || desc==="") { alert("الرجاء ملء جميع حقول المهمة"); return; }
+    try {
+        await addDoc(collection(db, "missions"), { title: title, desc: desc });
+        document.getElementById("missionTitle").value = "";
+        document.getElementById("missionDesc").value = "";
+    } catch(e) { alert("حدث خطأ أثناء إضافة المهمة"); }
+};
+
+async function deleteMission(id){
+    if(confirm("هل تريد إزالة هذه المهمة؟")){
+        await deleteDoc(doc(db, "missions", id));
+    }
+}
+
+// 🎖️ مراقبة الترشيحات (Real-time السحابي)
+onSnapshot(collection(db, "nominations"), (snapshot) => {
+    let list = document.getElementById("nominationsList");
+    list.innerHTML = "";
+    if(snapshot.empty) {
+        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا توجد ترشيحات مقدمة حالياً.</p>';
+        return;
+    }
+    snapshot.forEach((docSnap) => {
+        let item = docSnap.data();
+        let id = docSnap.id;
+        let card = document.createElement("div");
+        card.className = "nomination-card";
+        card.innerHTML = `
+            <h3 style="color:#d8c27a;">🎖️ المرشح: ${item.name}</h3>
+            <p style="margin:5px 0;"><b>الرتبة المقترحة:</b> ${item.rank}</p>
+            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>السبب:</b> ${item.reason}</p>
+            <button onclick="deleteNomination('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;">حذف الترشيح</button>
+        `;
+        list.appendChild(card);
+    });
+});
+
+document.getElementById("addNomination").onclick = async function(){
+    let name = document.getElementById("nomineeName").value.trim();
+    let rank = document.getElementById("nomineeRank").value.trim();
+    let reason = document.getElementById("nominationReason").value.trim();
+    if(name==="" || rank==="" || reason==="") { alert("الرجاء ملء بيانات الترشيح بالكامل"); return; }
+    try {
+        await addDoc(collection(db, "nominations"), { name: name, rank: rank, reason: reason });
+        document.getElementById("nomineeName").value = "";
+        document.getElementById("nomineeRank").value = "";
+        document.getElementById("nominationReason").value = "";
+    } catch(e) { alert("حدث خطأ أثناء تقديم الترشيح"); }
+};
+
+async function deleteNomination(id){
+    if(confirm("هل تريد إلغاء هذا الترشيح؟")){
+        await deleteDoc(doc(db, "nominations", id));
+    }
+}
+
+// 📄 مراقبة التقارير (Real-time السحابي)
 onSnapshot(collection(db, "reports"), (snapshot) => {
     let normalContainer = document.getElementById("normalReportsContainer");
     let secretContainer = document.getElementById("secretReportsContainer");
@@ -543,14 +686,14 @@ async function saveReport(){
             members: members, type: type, location: location,
             details: details, isSecret: isSecret
         });
-        alert("تم حفظ التقرير في السيرفر بنجاح ✅");
+        alert("تم حفظ التقرير بنجاح ✅");
         clearReportForm();
         show("reports");
-    } catch(e) { alert("خطأ بالسيرفر: لم يتم الحفظ"); }
+    } catch(e) { alert("خطأ في السيرفر: لم يتم الحفظ"); }
 }
 
 async function deleteReport(id){
-    if(confirm("هل أنت متأكد من حذف هذا التقرير نهائياً من السيرفر؟")){
+    if(confirm("هل أنت متأكد من حذف هذا التقرير نهائياً؟")){
         await deleteDoc(doc(db, "reports", id));
     }
 }
