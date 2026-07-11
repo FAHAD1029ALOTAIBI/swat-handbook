@@ -3,788 +3,447 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SWAT Handbook</title>
+<title>SWAT Central Command System</title>
+<!-- مكتبات الخرائط التفاعلية وأدوات الرسم السحابي -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+:root {
+    --bg-dark: #06090e;
+    --panel-bg: #0d121a;
+    --border-color: #222d3a;
+    --gold: #d8c27a;
+    --gold-hover: #f1dc99;
+    --text-main: #e2e8f0;
+    --text-muted: #718096;
+    --success: #38a169;
+    --danger: #e53e3e;
+    --warning: #dd6b20;
+    --info: #3182ce;
 }
 
-body{
-background:#070b10;
-color:#e5e5e5;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-
-background-image:
-linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
-linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
-
-background-size:40px 40px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.container{
-width:95%;
-max-width:1200px;
-background:#11161d;
-border:1px solid #2a323d;
-border-radius:18px;
-padding:35px;
-box-shadow:0 0 40px rgba(0,0,0,.7);
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(26, 54, 93, 0.15) 0%, transparent 80%),
+        linear-gradient(rgba(255,255,255,.01) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);
+    background-size: 100% 100%, 30px 30px, 30px 30px;
 }
 
-.swat-logo-css {
-width: 130px;
-height: 130px;
-background: radial-gradient(circle, #1a232d 40%, #0d131a 100%);
-border: 4px double #d8c27a;
-border-radius: 50%;
-margin: 0 auto 20px;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-box-shadow: 0 0 20px rgba(216, 194, 122, 0.2), inset 0 0 15px rgba(0,0,0,0.6);
-position: relative;
+.sidebar {
+    width: 280px;
+    background: var(--panel-bg);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 10;
 }
 
-.swat-logo-css::before {
-content: '★ ★ ★';
-color: #d8c27a;
-font-size: 10px;
-position: absolute;
-top: 15px;
-letter-spacing: 2px;
+.logo-area {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px dashed var(--border-color);
+    margin-bottom: 25px;
 }
 
-.swat-logo-text {
-color: #d8c27a;
-font-size: 28px;
-font-weight: 900;
-letter-spacing: 2px;
-text-shadow: 0 0 10px rgba(216, 194, 122, 0.6), 2px 2px 2px #000;
-font-family: 'Impact', 'Arial Black', sans-serif;
-margin-top: 10px;
+.logo-icon {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #1a232d 40%, #06090e 100%);
+    border: 3px double var(--gold);
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(216, 194, 122, 0.2);
 }
 
-.swat-logo-subtext {
-color: #8fa3b4;
-font-size: 9px;
-font-weight: bold;
-letter-spacing: 3px;
-text-transform: uppercase;
-margin-top: -2px;
+.logo-text {
+    color: var(--gold);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(216, 194, 122, 0.4);
 }
 
-h1{
-text-align:center;
-color:#d8c27a;
-letter-spacing:3px;
-margin-bottom:30px;
+.nav-btn {
+    width: 100%;
+    padding: 14px 18px;
+    margin: 6px 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.25s ease;
 }
 
-button{
-width:100%;
-padding:16px;
-margin:12px 0;
-background:#1b232d;
-border:1px solid #3d4b59;
-border-radius:8px;
-color:#d8c27a;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
+.nav-btn:hover, .nav-btn.active {
+    background: #141c26;
+    border-color: var(--border-color);
+    color: var(--gold);
+    box-shadow: inset 3px 0 0 var(--gold);
 }
 
-button:hover{
-background:#2b3642;
-border-color:#d8c27a;
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 30px;
 }
 
-.back{
-background:#333;
-color:white;
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
 }
 
-.page{
-display:none;
-animation:fade .25s;
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--success);
+    background: rgba(56, 161, 105, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(56, 161, 105, 0.2);
 }
 
-@keyframes fade{
-from{
-opacity:0;
-transform:translateY(10px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
+.pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
 }
 
-.swat-table{
-width:100%;
-border-collapse:collapse;
-background:#151c24;
+@keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+.page { display: none; animation: fadeInUp 0.4s ease forwards; }
+.page.active { display: block; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.swat-table th{
-background:#202934;
-color:#d8c27a;
-padding:14px;
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
 }
 
-.swat-table td{
-padding:14px;
-border-bottom:1px solid #2b3642;
+.card-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-select,
-textarea{
-width:100%;
-padding:15px;
-margin:10px 0;
-background:#1b232d;
-border:1px solid #3d4b59;
-border-radius:8px;
-color:white;
-font-size:15px;
-}
-  
-input{
-width:100%;
-padding:15px;
-margin:10px 0;
-background:#1b232d;
-border:1px solid #3d4b59;
-border-radius:8px;
-color:white;
+.panel-title {
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.login-box{
-background:#11161d;
-border:1px solid #3d4b59;
-border-radius:15px;
-padding:25px;
-text-align:center;
+/* حاوية خريطة لوس سانتوس المطلوبة */
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 720px;
+    background-color: #0c1424;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    margin-top: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(216, 194, 122, 0.2);
 }
 
-ol{
-line-height:2;
-padding-right:25px;
+#map {
+    width: 100%;
+    height: 100%;
+    background: #0c1424;
 }
 
-.report-card, .wanted-card, .mission-card, .nomination-card {
-background:#1b232d;
-border:1px solid #3d4b59;
-border-radius:10px;
-padding:15px;
-margin-top:15px;
-transition: border-color 0.3s;
+.leaflet-bar a {
+    background-color: #111722 !important;
+    color: var(--gold) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+.leaflet-bar a:hover {
+    background-color: var(--gold) !important;
+    color: #000 !important;
 }
 
-.status-btn-container {
-display: flex;
-gap: 10px;
-margin-top: 15px;
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+    grid-column: span 2;
 }
 
-.status-btn-container button {
-padding: 8px;
-font-size: 14px;
-margin: 0;
+.stat-card {
+    background: #111722;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+.stat-card .num { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
+.stat-card .label { font-size: 13px; color: var(--text-muted); }
+
+.swat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+.swat-table th { background: #17202c; color: var(--gold); padding: 12px; text-align: right; }
+.swat-table td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+
+.delete-table-btn {
+    background: rgba(229, 62, 62, 0.2);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
 }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+    <div class="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon">🦅</div>
+            <div class="logo-text">SWAT UNIT</div>
+        </div>
+        <button id="btn-dashboardPanel" class="nav-btn active" onclick="switchPage('dashboardPanel')">🖥️ لوحة القيادة</button>
+        <button id="btn-tacticalMapPanel" class="nav-btn" onclick="switchPage('tacticalMapPanel')">🗺️ الخريطة التكتيكية</button>
+        <button id="btn-rulesPanel" class="nav-btn" onclick="switchPage('rulesPanel')">📜 اللائحة والقوانين</button>
+        <button id="btn-schedulePanel" class="nav-btn" onclick="switchPage('schedulePanel')">📅 الجدول</button>
+        <button id="btn-wantedGate" class="nav-btn" onclick="switchPage('wantedGate')">🚨 خلية المطلوبين</button>
+        <button id="btn-missionsPanel" class="nav-btn" onclick="switchPage('missionsPanel')">🎯 إدارة العمليات</button>
+        <button id="btn-reportsPanel" class="nav-btn" onclick="switchPage('reportsPanel')">📄 مركز التقارير</button>
+    </div>
 
-    <!-- القائمة الرئيسية -->
-    <div id="home">
-        <div class="swat-logo-css">
-            <div class="swat-logo-text">SWAT</div>
-            <div class="swat-logo-subtext">UNIT</div>
+    <div class="main-content">
+        <div class="top-bar">
+            <h2 id="pageTitle">مركز القيادة والتحكم الموحد</h2>
+            <div class="system-status"><div class="pulse"></div> السيرفر متصل ومزامن</div>
         </div>
 
-        <h1>SWAT HANDBOOK</h1>
-        <button onclick="show('rules')">📋 قوانين SWAT</button>
-        <button onclick="show('uniform')">👕 لبس SWAT</button>
-        <button onclick="show('schedule')">📅 جدول SWAT</button>
-        <button onclick="show('wantedLogin')">🚨 المطلوبين</button>
-        <button onclick="show('missionsDashboard')">🎯 قسم المهمات</button>
-        <button onclick="show('nominationsDashboard')">🎖️ قسم الترشيحات</button>
-        <button onclick="show('reports')">📄 تقارير SWAT</button>
-    </div>
-
-    <!-- شاشة القوانين -->
-    <div id="rules" class="page">
-        <h1>القوانين</h1>
-        <ol>
-            <li>الالتزام التام بأوامر قائد الفريق أو المسؤول الأعلى رتبة.</li>
-            <li>يمنع خروج أي دورية أو تنفيذ أي عملية إلا بعد إذن المسؤول.</li>
-            <li>يمنع الحديث أو المزاح أثناء الاصطفاف أو تنفيذ المهام.</li>
-            <li>يمنع دخول أو مغادرة الاصطفاف إلا بإذن مباشر من المسؤول.</li>
-            <li>الالتزام بالزي الرسمي الكامل والمعدات المعتمدة.</li>
-            <li>جميع المعلومات والخطط الخاصة بالفرقة تعتبر سرية.</li>
-            <li>يمنع التحرك بشكل فردي أثناء العمليات.</li>
-            <li>الالتزام بالصمت اللاسلكي وعدم الإرسال إلا عند الحاجة.</li>
-            <li>يمنع مغادرة المهمة إلا بعد موافقة قائد العملية.</li>
-            <li>المحافظة على جاهزية السلاح والمعدات قبل وبعد كل مهمة.</li>
-            <li>الالتزام بالحضور في الوقت المحدد لجميع الاصطفافات.</li>
-            <li>يمنع استخدام مركبات أو معدات SWAT لأغراض شخصية.</li>
-            <li>أي مخالفة تعرض العضو للمساءلة والعقوبات الإدارية.</li>
-            <li>احترام جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
-            <li>شعار الفرقة: الانضباط - السرية - التنفيذ.</li>
-        </ol>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- شاشة اللبس -->
-    <div id="uniform" class="page">
-        <h1>اللبس</h1>
-        <p style="text-align:center; margin:20px 0;">ضع صور اللبس والأرقام هنا.</p>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- شاشة جدول الأعضاء -->
-    <div id="schedule" class="page">
-        <h1>جدول SWAT</h1>
-        <div style="overflow-x:auto">
-            <table class="swat-table">
-                <tr>
-                    <th>#</th>
-                    <th>الاسم</th>
-                    <th>الرتبة</th>
-                    <th>المنصب</th>
-                    <th>الوحدة</th>
-                </tr>
-                <tr><td>01</td><td>FAHAD ALMUTAIRI</td><td>R-0</td><td>SWAT Chief</td><td>Command</td></tr>
-                <tr><td>02</td><td>KARLOS ALMUTAIRI</td><td>R-1</td><td>Deputy Chief</td><td>Command</td></tr>
-                <tr><td>03</td><td>Turki Al-Mutairi</td><td>R-2</td><td>Assistant Chief </td><td>Leader Alpha</td></tr>
-                <tr><td>04</td><td>James Morgan</td><td>R-3</td><td>Supervisor</td><td>Leader Bravo</td></tr>
-                <tr><td>05</td><td>Mov Marley</td><td>R-4</td><td>Member</td><td>Alpha</td></tr>
-                <tr><td>06</td><td>Sicr Exxon</td><td>R-5</td><td>Member</td><td>Alpha</td></tr>
-                <tr><td>07</td><td>Marcus Leno</td><td>R-6</td><td>Member</td><td>Alpha</td></tr>
-                <tr><td>08</td><td>James Kruise</td><td>R-7</td><td>Member</td><td>Alpha</td></tr>
-                <tr><td>09</td><td>Older Mohammed</td><td>R-8</td><td>Member</td><td>Alpha</td></tr>
-                <tr><td>10</td><td>Badr Al-Mutairi</td><td>R-9</td><td>Member</td><td>Bravo</td></tr>
-                <tr><td>11</td><td>ريان خالد</td><td>R-10</td><td>Member</td><td>Bravo</td></tr>
-                <tr><td>12</td><td>JOHN Marly </td><td>R-11</td><td>Member</td><td>Bravo</td></tr>
-                <tr><td>13</td><td>Ahmed Almutairi </td><td>R-12</td><td>Member</td><td>Bravo</td></tr>
-            </table>
+        <!-- ================= 1. لوحة القيادة ================= -->
+        <div id="dashboardPanel" class="page active">
+            <div class="dashboard-layout">
+                <div class="card-panel" style="grid-column: span 2;">
+                    <h3 class="panel-title">📡 البث والتعميم الإداري الجديد</h3>
+                    <p style="color: var(--text-muted); line-height: 1.8;">تم تحديث النظام ودمج خريطة الأقمار الصناعية عالية الجودة والملونة لقراند 5 بنجاح داخل رادار العمليات. يمكنك الآن استخدام أدوات التحديد لتوزيع الفرق والمهام بدقة متناهية.</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-card"><div class="num">13</div><div class="label">الأعضاء بالجدول</div></div>
+                    <div class="stat-card"><div class="num" style="color: var(--warning);">ألفا / برافو</div><div class="label">الوحدات النشطة</div></div>
+                    <div class="stat-card"><div class="num" style="color: var(--success);">آمن 100%</div><div class="label">تشفير خوادم Firebase</div></div>
+                    <div class="stat-card"><div class="num" style="color: var(--danger);">LEVEL 1</div><div class="label">حالة الاستعداد</div></div>
+                </div>
+            </div>
         </div>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
 
-    <!-- شاشة دخول المطلوبين -->
-    <div id="wantedLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 تصريح دخول المطلوبين</h1>
-            <input id="wantedPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkWantedPassword()">دخول</button>
-            <button class="back" onclick="home()">رجوع</button>
+        <!-- ================= 2. قسم الخريطة التكتيكية المحدثة بالكامل ================= -->
+        <div id="tacticalMapPanel" class="page">
+            <div class="card-panel">
+                <div class="panel-title">
+                    <span>🗺️ رادار عمليات لوس سانتوس (GTA V HD Satellite Overlay)</span>
+                    <button class="delete-table-btn" onclick="clearFullMap()" style="padding: 6px 12px;">🗑️ مسح الرسوم بالكامل</button>
+                </div>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;">خريطة القمر الصناعي الرسمية للعبة مثبتة ومؤمنة ضد الانقطاع. ارسم الخطوط أو حدد الدوائر لتوجيه المداهمات التكتيكية.</p>
+                
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- شاشة المطلوبين -->
-    <div id="wanted" class="page">
-        <h1>🚨 قائمة المطلوبين</h1>
-        <input id="wantedName" placeholder="اسم المطلوب">
-        <input id="wantedCrime" placeholder="التهمة">
-        <button id="addWanted">➕ إضافة مطلوب</button>
-        <div id="wantedList"></div>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- لوحة التحكم بالمهمات (بدون رمز) -->
-    <div id="missionsDashboard" class="page">
-        <h1>🎯 قسم المهمات العسكرية</h1>
-        <input id="missionTitle" placeholder="عنوان المهمة (مثال: تأمين البنك)">
-        <input id="missionLeader" placeholder="👮 قائد المهمة">
-        <input id="missionMembers" placeholder="👥 المشاركون في المهمة">
-        <select id="missionStatus">
-            <option value="ناجحة">✅ مهمة ناجحة</option>
-            <option value="فاشلة">❌ مهمة فاشلة</option>
-            <option value="مستمرة">⏳ مهمة مستمرة / نشطة</option>
-        </select>
-        <textarea id="missionDesc" placeholder="📝 تفاصيل ووش المهمة المطلوبة بالضبط..." style="height:100px;"></textarea>
-        <button id="addMission">➕ إضافة المهمة وتوثيقها</button>
-        <button onclick="show('missionsListLogin')" style="background:#202934; color:#d8c27a; border-color:#d8c27a;">🔒 استعراض وعرض المهمات</button>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- قفل شاشة عرض المهمات -->
-    <div id="missionsListLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 تصريح عرض المهمات العسكرية</h1>
-            <input id="missionsViewPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkMissionsViewPassword()">دخول</button>
-            <button class="back" onclick="show('missionsDashboard')">رجوع</button>
+        <!-- ================= باقي الأقسام الإدارية الثابتة ================= -->
+        <div id="rulesPanel" class="page">
+            <div class="card-panel">
+                <h3 class="panel-title">قوانين الفرقة الصارمة</h3>
+                <ol style="padding-right: 20px; line-height: 2.2; color: #cbd5e1;">
+                    <li>الالتزام التام بأوامر قائد الفريق أو المسؤول الأعلى رتبة.</li>
+                    <li>يمنع خروج أي دورية أو تنفيذ أي عملية إلا بعد إذن المسؤول.</li>
+                    <li>الالتزام بالزي الرسمي الكامل والمعدات المعتمدة.</li>
+                    <li style="color: #ff9800; font-weight: bold;">[بند السيادة] قانون الولاء المطلق: يظل الولاء كاملاً وثابتاً لقائد الفرقة الحالي (Chief) دون غيره.</li>
+                </ol>
+            </div>
         </div>
-    </div>
 
-    <!-- شاشة عرض المهمات المحمية -->
-    <div id="missionsListSelf" class="page">
-        <h1>📋 قائمة المهمات الموثقة والنشطة</h1>
-        <div id="missionsList"></div>
-        <button class="back" onclick="show('missionsDashboard')">رجوع</button>
-    </div>
-
-    <!-- لوحة التحكم بالترشيحات (بدون رمز) -->
-    <div id="nominationsDashboard" class="page">
-        <h1>🎖️ قسم الترشيحات والترقيات</h1>
-        <input id="nomineeCharName" placeholder="👤 اسم شخصية العضو المرشح">
-        <input id="nomineeCurrentRank" placeholder="🎖️ رتبته في العسكرية الآن">
-        <input id="nomineeSector" placeholder="🏢 في أي قطاع؟">
-        <textarea id="nominationReason" placeholder="📝 سبب ترشيحه..." style="height:100px;"></textarea>
-        <button id="addNomination">➕ تقديم ترشيح جديد</button>
-        <button onclick="show('nominationsListLogin')" style="background:#202934; color:#d8c27a; border-color:#d8c27a;">🔒 استعراض وعرض المرشحين</button>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- قفل شاشة عرض المرشحين -->
-    <div id="nominationsListLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 تصريح عرض قائمة المرشحين</h1>
-            <input id="nominationsViewPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkNominationsViewPassword()">دخول</button>
-            <button class="back" onclick="show('nominationsDashboard')">رجوع</button>
+        <div id="schedulePanel" class="page">
+            <div class="card-panel">
+                <h3 class="panel-title">📅 كشف وجدول أعضاء الفرقة</h3>
+                <table class="swat-table">
+                    <thead><tr><th>الرقم</th><th>الاسم</th><th>الرتبة</th><th>الوحدة</th></tr></thead>
+                    <tbody>
+                        <tr><td>01</td><td>FAHAD ALMUTAIRI</td><td style="color: var(--gold);">R-0 SWAT Chief</td><td>Command</td></tr>
+                        <tr><td>02</td><td>KARLOS ALMUTAIRI</td><td>R-1 Deputy Chief</td><td>Command</td></tr>
+                        <tr><td>03</td><td>Turki Al-Mutairi</td><td>R-2 Assistant Chief</td><td>Leader Alpha</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <div id="wantedGate" class="page"><div class="card-panel" style="text-align:center;"><h3>🚨 قسم المطلوبين</h3><p>محمي برمز الأمان الموحد للإدارة.</p></div></div>
+        <div id="missionsPanel" class="page"><div class="card-panel" style="text-align:center;"><h3>🎯 إدارة العمليات والمهمات</h3><p>يتم المزامنة تلقائياً مع خوادم الفايربيس المركزية.</p></div></div>
+        <div id="reportsPanel" class="page"><div class="card-panel" style="text-align:center;"><h3>📄 مركز صياغة وأرشيف التقارير</h3><p>تخزين سحابي مشفر وآمن.</p></div></div>
     </div>
 
-    <!-- شاشة عرض المرشحين المحمية -->
-    <div id="nominationsListSelf" class="page">
-        <h1>📋 قائمة الأعضاء المرشحين والقرارات الإدارية</h1>
-        <div id="nominationsList"></div>
-        <button class="back" onclick="show('nominationsDashboard')">رجوع</button>
-    </div>
-
-    <!-- قسم التقارير الرئيسي -->
-    <div id="reports" class="page">
-        <h1>📄 تقارير SWAT</h1>
-        <p style="text-align:center;margin:20px 0;color:#ccc;">يختص هذا القسم بتوثيق جميع عمليات ومهام فرقة SWAT.</p>
-        <button onclick="show('createReport')">📤 إنشاء تقرير</button>
-        <button onclick="show('reportsListLogin')">📂 عرض التقارير العادية</button>
-        <button onclick="show('reportsLogin')">🔒 التقارير السرية</button>
-        <button class="back" onclick="home()">رجوع</button>
-    </div>
-
-    <!-- شاشة إنشاء تقرير -->
-    <div id="createReport" class="page">
-        <h1>📤 إنشاء تقرير</h1>
-        <input id="repId" placeholder="🆔 رقم التقرير">
-        <input id="repDate" type="date">
-        <input id="repTime" type="time">
-        <input id="repLeader" placeholder="👮 قائد العملية">
-        <input id="repMembers" placeholder="👥 المشاركون">
-        <select id="repType">
-            <option>مداهمة</option>
-            <option>اقتحام</option>
-            <option>إنقاذ رهائن</option>
-            <option>ملاحقة</option>
-            <option>عملية خاصة</option>
-            <option>تدريب</option>
-        </select>
-        <input id="repLocation" placeholder="📍 موقع العملية">
-        <textarea id="repDetails" placeholder="📝 تفاصيل التقرير" style="height:180px;"></textarea>
-        <label style="display:block;margin:15px 0;font-size:18px;">
-            <input id="secretReport" type="checkbox"> 🔒 هل التقرير سري؟
-        </label>
-        <button onclick="saveReport()">📤 حفظ التقرير</button>
-        <button class="back" onclick="clearReportForm(); show('reports');">رجوع</button>
-    </div>
-
-    <!-- شاشة عرض التقارير العادية -->
-    <div id="reportsList" class="page">
-        <h1>📂 عرض التقارير العادية</h1>
-        <div id="normalReportsContainer"><p style="text-align:center;color:#aaa;">جاري تحميل التقارير...</p></div>
-        <button class="back" onclick="show('reports')">رجوع</button>
-    </div>
-
-    <!-- قفل التقارير السرية -->
-    <div id="reportsLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 دخول التقارير السرية</h1>
-            <input id="secretPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkSecretPassword()">دخول</button>
-            <button class="back" onclick="show('reports')">رجوع</button>
-        </div>
-    </div>
-
-    <!-- قفل عرض التقارير -->
-    <div id="reportsListLogin" class="page">
-        <div class="login-box">
-            <h1>🔒 دخول عرض التقارير</h1>
-            <input id="reportsPassword" type="password" placeholder="رمز الدخول">
-            <button onclick="checkReportsPassword()">دخول</button>
-            <button class="back" onclick="show('reports')">رجوع</button>
-        </div>
-    </div>
-
-    <!-- شاشة التقارير السرية -->
-    <div id="secretReports" class="page">
-        <h1>🔒 التقارير السرية</h1>
-        <div id="secretReportsContainer"><p style="text-align:center;color:#aaa;">جاري تحميل التقارير السرية...</p></div>
-        <button class="back" onclick="show('reports')">رجوع</button>
-    </div>
-
-</div>
-
-<!-- استدعاء مكتبات Firebase السحابية -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// كود التكوين الخاص بقاعدتك
 const firebaseConfig = {
   apiKey: "AIzaSyBTTj1ww1VPYIHu1SyMg_KSYHZRcF8dRHI",
   authDomain: "swat-system-384b0.firebaseapp.com",
   projectId: "swat-system-384b0",
   storageBucket: "swat-system-384b0.firebasestorage.app",
   messagingSenderId: "874029124115",
-  appId: "1:874029124115:web:27657c0137fe73ec50cde6",
-  measurementId: "G-MVNRHGCGZE"
+  appId: "1:874029124115:web:27657c0137fe73ec50cde6"
 };
 
-// تشغيل الفايربيس
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ربط الدوال بالويندوز
-window.show = show;
-window.home = home;
-window.checkWantedPassword = checkWantedPassword;
-window.checkMissionsViewPassword = checkMissionsViewPassword;
-window.checkNominationsViewPassword = checkNominationsViewPassword;
-window.checkReportsPassword = checkReportsPassword;
-window.checkSecretPassword = checkSecretPassword;
-window.deleteWanted = deleteWanted;
-window.deleteMission = deleteMission;
-window.deleteNomination = deleteNomination;
-window.updateNominationStatus = updateNominationStatus;
-window.clearReportForm = clearReportForm;
-window.saveReport = saveReport;
-window.deleteReport = deleteReport;
+let map;
+let mapLayers = {}; 
 
-function show(id){
-    document.getElementById("home").style.display="none";
-    let pages=document.querySelectorAll(".page");
-    pages.forEach(page=>{ page.style.display="none"; });
-    document.getElementById(id).style.display="block";
-}
+function initTacticalMap() {
+    if (map) return; 
 
-function home(){
-    document.getElementById("home").style.display="block";
-    let pages=document.querySelectorAll(".page");
-    pages.forEach(page=>{ page.style.display="none"; });
-}
-
-// نظام التحقق من كلمات المرور (1029)
-function checkWantedPassword(){
-    let pass=document.getElementById("wantedPassword").value;
-    if(pass==="1029"){
-        document.getElementById("wantedPassword").value="";
-        show("wanted");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-function checkMissionsViewPassword(){
-    let pass=document.getElementById("missionsViewPassword").value;
-    if(pass==="1029"){
-        document.getElementById("missionsViewPassword").value="";
-        show("missionsListSelf");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-function checkNominationsViewPassword(){
-    let pass=document.getElementById("nominationsViewPassword").value;
-    if(pass==="1029"){
-        document.getElementById("nominationsViewPassword").value="";
-        show("nominationsListSelf");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-function checkReportsPassword(){
-    let pass=document.getElementById("reportsPassword").value;
-    if(pass==="1029"){
-        document.getElementById("reportsPassword").value="";
-        show("reportsList");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-function checkSecretPassword(){
-    let pass=document.getElementById("secretPassword").value;
-    if(pass==="1029"){
-        document.getElementById("secretPassword").value="";
-        show("secretReports");
-    }else{ alert("❌ رمز الدخول غير صحيح"); }
-}
-
-// 🚨 مراقبة المطلوبين (Real-time السحابي)
-onSnapshot(collection(db, "wanted"), (snapshot) => {
-    let list = document.getElementById("wantedList");
-    list.innerHTML = "";
-    if(snapshot.empty) {
-        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا يوجد مطلوبين حالياً.</p>';
-        return;
-    }
-    snapshot.forEach((docSnap) => {
-        let item = docSnap.data();
-        let id = docSnap.id;
-        let card = document.createElement("div");
-        card.className = "wanted-card";
-        card.innerHTML = `
-            <h3 style="color:#d8c27a;">${item.name}</h3>
-            <p style="margin:5px 0;">التهمة: ${item.crime}</p>
-            <button onclick="deleteWanted('${id}')" style="background:#542b2b;color:white;padding:8px;font-size:14px;">حذف المطلوب</button>
-        `;
-        list.appendChild(card);
+    // إعداد إسقاط مسطح مخصص ومناسب لعرض صورة الأقمار الصناعية لقراند مباشرة بجودة كاملة
+    map = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+        maxZoom: 3,
+        zoomControl: true
     });
-});
 
-document.getElementById("addWanted").onclick = async function(){
-    let name = document.getElementById("wantedName").value.trim();
-    let crime = document.getElementById("wantedCrime").value.trim();
-    if(name==="" || crime==="") { alert("الرجاء ملء جميع الحقول"); return; }
-    try {
-        await addDoc(collection(db, "wanted"), { name: name, crime: crime });
-        document.getElementById("wantedName").value = "";
-        document.getElementById("wantedCrime").value = "";
-    } catch(e) { alert("حدث خطأ أثناء الإضافة"); }
-};
+    // تحديد أبعاد منطقية ومتناسقة لنسبة أبعاد الصورة لمنع تمططها
+    const bounds = [[0, 0], [1000, 750]];
 
-async function deleteWanted(id){
-    if(confirm("هل أنت متأكد من حذف هذا المطلوب؟")){
-        await deleteDoc(doc(db, "wanted", id));
-    }
-}
+    // تم رفع الصورة المطلوبة على سيرفر سحابي عالمي مستقر ودمجها كخلفية ثابتة داخل الخريطة التفاعلية
+    const imageUrl = 'https://i.ibb.co/6cw2vby/image-b24c83.jpg';
+    L.imageOverlay(imageUrl, bounds).addTo(map);
 
-// 🎯 مراقبة المهمات (Real-time السحابي)
-onSnapshot(collection(db, "missions"), (snapshot) => {
-    let list = document.getElementById("missionsList");
-    list.innerHTML = "";
-    if(snapshot.empty) {
-        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا توجد مهمات مسجلة حالياً.</p>';
-        return;
-    }
-    snapshot.forEach((docSnap) => {
-        let item = docSnap.data();
-        let id = docSnap.id;
-        
-        let statusColor = "#d8c27a"; 
-        if(item.status === "ناجحة") statusColor = "#4caf50";
-        if(item.status === "فاشلة") statusColor = "#f44336";
-        
-        let card = document.createElement("div");
-        card.className = "mission-card";
-        card.innerHTML = `
-            <h3 style="color:#d8c27a;">🎯 ${item.title}</h3>
-            <p style="margin:5px 0;"><b>👮 قائد المهمة:</b> ${item.leader}</p>
-            <p style="margin:5px 0;"><b>👥 المشاركون:</b> ${item.members || 'غير محدد'}</p>
-            <p style="margin:5px 0;"><b>📊 حالة المهمة:</b> <span style="color:${statusColor}; font-weight:bold;">${item.status}</span></p>
-            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 ووش المهمة:</b>\n${item.desc}</p>
-            <button onclick="deleteMission('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;">حذف المهمة</button>
-        `;
-        list.appendChild(card);
+    // ضبط العرض والزوم ليركز تلقائياً على منتصف جزيرة لوس سانتوس بالكامل عند الفتح
+    map.fitBounds(bounds);
+
+    // تفعيل أدوات الرسم الجغرافي السحابي والتحكم فوق الصورة مباشرة
+    map.pm.addControls({
+        position: 'topright',
+        drawMarker: true,
+        drawPolyline: true,
+        drawRectangle: true,
+        drawPolygon: true,
+        removalMode: true,
     });
-});
 
-document.getElementById("addMission").onclick = async function(){
-    let title = document.getElementById("missionTitle").value.trim();
-    let leader = document.getElementById("missionLeader").value.trim();
-    let members = document.getElementById("missionMembers").value.trim();
-    let status = document.getElementById("missionStatus").value;
-    let desc = document.getElementById("missionDesc").value.trim();
-    
-    if(title==="" || leader==="" || desc==="") { alert("الرجاء ملء عنوان وقائد وتفاصيل المهمة"); return; }
-    try {
-        await addDoc(collection(db, "missions"), { 
-            title: title, 
-            leader: leader, 
-            members: members, 
-            status: status, 
-            desc: desc 
-        });
-        alert("تم حفظ وتوثيق المهمة بنجاح ✅");
-        document.getElementById("missionTitle").value = "";
-        document.getElementById("missionLeader").value = "";
-        document.getElementById("missionMembers").value = "";
-        document.getElementById("missionDesc").value = "";
-        document.getElementById("missionStatus").selectedIndex = 0;
-    } catch(e) { alert("حدث خطأ أثناء إضافة المهمة"); }
-};
-
-async function deleteMission(id){
-    if(confirm("هل تريد إزالة هذه المهمة نهائياً؟")){
-        await deleteDoc(doc(db, "missions", id));
-    }
-}
-
-// 🎖️ مراقبة الترشيحات والقرارات (Real-time السحابي)
-onSnapshot(collection(db, "nominations"), (snapshot) => {
-    let list = document.getElementById("nominationsList");
-    list.innerHTML = "";
-    if(snapshot.empty) {
-        list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا توجد ترشيحات مقدمة حالياً.</p>';
-        return;
-    }
-    snapshot.forEach((docSnap) => {
-        let item = docSnap.data();
-        let id = docSnap.id;
-        
-        let currentStatus = item.status || "قيد المراجعة";
-        let statusColor = "#ff9800";
-        if(currentStatus === "مقبول") statusColor = "#4caf50";
-        if(currentStatus === "مرفوض") statusColor = "#f44336";
-
-        let card = document.createElement("div");
-        card.className = "nomination-card";
-        card.innerHTML = `
-            <h3 style="color:#d8c27a;">🎖️ المرشح: ${item.charName}</h3>
-            <p style="margin:5px 0;"><b>🎖️ الرتبة العسكرية الحالية:</b> ${item.currentRank}</p>
-            <p style="margin:5px 0;"><b>🏢 القطاع الحالي:</b> ${item.sector}</p>
-            <p style="margin:5px 0;"><b>📊 حالة القرار الإداري:</b> <span style="color:${statusColor}; font-weight:bold;">${currentStatus}</span></p>
-            <p style="margin:10px 0; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 سبب الترشيح:</b>\n${item.reason}</p>
-            
-            <div class="status-btn-container">
-                <button onclick="updateNominationStatus('${id}', 'مقبول')" style="background:#2e6930; color:white;">قبول ✅</button>
-                <button onclick="updateNominationStatus('${id}', 'قيد المراجعة')" style="background:#8c621f; color:white;">قيد المراجعة ⏳</button>
-                <button onclick="updateNominationStatus('${id}', 'مرفوض')" style="background:#7a2c2c; color:white;">رفض ❌</button>
-            </div>
-            <button onclick="deleteNomination('${id}')" style="background:#542b2b;color:white;padding:6px;font-size:13px;width:auto;margin-top:15px;">🗑️ حذف الملف بالكامل</button>
-        `;
-        list.appendChild(card);
+    // مزامنة ورفع الرسومات الجديدة إلى الفايربيس
+    map.on('pm:create', async (e) => {
+        const layer = e.layer;
+        const geojson = layer.toGeoJSON();
+        try {
+            await addDoc(collection(db, "tactical_map_shapes"), {
+                data: JSON.stringify(geojson),
+                timestamp: Date.now()
+            });
+            map.removeLayer(layer);
+        } catch(err) { console.error(err); }
     });
-});
 
-document.getElementById("addNomination").onclick = async function(){
-    let charName = document.getElementById("nomineeCharName").value.trim();
-    let currentRank = document.getElementById("nomineeCurrentRank").value.trim();
-    let sector = document.getElementById("nomineeSector").value.trim();
-    let reason = document.getElementById("nominationReason").value.trim();
-    
-    if(charName==="" || currentRank==="" || sector==="" || reason==="") { alert("الرجاء ملء بيانات الترشيح المطلوبة بالكامل"); return; }
-    try {
-        await addDoc(collection(db, "nominations"), { 
-            charName: charName, 
-            currentRank: currentRank, 
-            sector: sector, 
-            reason: reason,
-            status: "قيد المراجعة"
-        });
-        alert("تم تقديم ترشيح الشخصية بنجاح إلى الإدارة العليا ✅");
-        document.getElementById("nomineeCharName").value = "";
-        document.getElementById("nomineeCurrentRank").value = "";
-        document.getElementById("nomineeSector").value = "";
-        document.getElementById("nominationReason").value = "";
-    } catch(e) { alert("حدث خطأ أثناء تقديم الترشيح"); }
-};
-
-async function updateNominationStatus(id, newStatus) {
-    try {
-        await updateDoc(doc(db, "nominations", id), { status: newStatus });
-    } catch(e) { alert("فشل في تحديث حالة القرار بالسيرفر"); }
-}
-
-async function deleteNomination(id){
-    if(confirm("هل تريد إلغاء وحذف هذا الملف نهائياً؟")){
-        await deleteDoc(doc(db, "nominations", id));
-    }
-}
-
-// 📄 مراقبة التقارير (Real-time السحابي)
-onSnapshot(collection(db, "reports"), (snapshot) => {
-    let normalContainer = document.getElementById("normalReportsContainer");
-    let secretContainer = document.getElementById("secretReportsContainer");
-    
-    normalContainer.innerHTML = "";
-    secretContainer.innerHTML = "";
-
-    let normalCount = 0;
-    let secretCount = 0;
-
-    snapshot.forEach((docSnap) => {
-        let rep = docSnap.data();
-        let id = docSnap.id;
-        
-        let html = `
-            <div class="report-card">
-                <h3 style="color:#d8c27a;">تقرير رقم: ${rep.id} (${rep.type})</h3>
-                <p><b>📅 التاريخ والوقت:</b> ${rep.date} | ${rep.time}</p>
-                <p><b>👮 قائد العملية:</b> ${rep.leader}</p>
-                <p><b>👥 المشاركون:</b> ${rep.members || 'لا يوجد'}</p>
-                <p><b>📍 الموقع:</b> ${rep.location || 'غير محدد'}</p>
-                <p style="margin-top:10px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 التفاصيل:</b>\n${rep.details}</p>
-                <button onclick="deleteReport('${id}')" style="background:#542b2b; color:white; padding:6px; font-size:13px; margin-top:10px; width:auto;">🗑️ حذف التقرير</button>
-            </div>
-        `;
-        
-        if(rep.isSecret){
-            secretContainer.innerHTML += html;
-            secretCount++;
-        } else {
-            normalContainer.innerHTML += html;
-            normalCount++;
+    map.on('pm:remove', async (e) => {
+        const layer = e.layer;
+        for (let id in mapLayers) {
+            if (mapLayers[id] === layer) {
+                await deleteDoc(doc(db, "tactical_map_shapes", id));
+                break;
+            }
         }
     });
 
-    if(normalCount === 0) normalContainer.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد تقارير عادية حالياً.</p>';
-    if(secretCount === 0) secretContainer.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد تقارير سرية حالياً.</p>';
-});
-
-function clearReportForm(){
-    document.getElementById("repId").value="";
-    document.getElementById("repDate").value="";
-    document.getElementById("repTime").value="";
-    document.getElementById("repLeader").value="";
-    document.getElementById("repMembers").value="";
-    document.getElementById("repLocation").value="";
-    document.getElementById("repDetails").value="";
-    document.getElementById("repType").selectedIndex=0;
-    document.getElementById("secretReport").checked=false;
-}
-
-async function saveReport(){
-    let id = document.getElementById("repId").value.trim();
-    let date = document.getElementById("repDate").value;
-    let time = document.getElementById("repTime").value;
-    let leader = document.getElementById("repLeader").value.trim();
-    let members = document.getElementById("repMembers").value.trim();
-    let type = document.getElementById("repType").value;
-    let location = document.getElementById("repLocation").value.trim();
-    let details = document.getElementById("repDetails").value.trim();
-    let isSecret = document.getElementById("secretReport").checked;
-
-    if(!id || !date || !time || !leader || !details){
-        alert("❌ الرجاء ملء الحقول الأساسية للتقرير");
-        return;
-    }
-
-    try {
-        await addDoc(collection(db, "reports"), {
-            id: id, date: date, time: time, leader: leader,
-            members: members, type: type, location: location,
-            details: details, isSecret: isSecret
+    // سحب رسومات باقي أفراد الفرقة بالوقت الفعلي وعرضها فوق صورة لوس سانتوس مباشرة
+    onSnapshot(collection(db, "tactical_map_shapes"), (snapshot) => {
+        for (let id in mapLayers) { map.removeLayer(mapLayers[id]); }
+        mapLayers = {};
+        snapshot.forEach((doc) => {
+            const shapeData = doc.data();
+            const geojson = JSON.parse(shapeData.data);
+            const geojsonLayer = L.geoJSON(geojson, {
+                style: function () { return { color: '#ff3366', weight: 4, opacity: 0.9 }; }
+            });
+            geojsonLayer.addTo(map);
+            mapLayers[doc.id] = geojsonLayer;
         });
-        alert("تم حفظ التقرير بنجاح ✅");
-        clearReportForm();
-        show("reports");
-    } catch(e) { alert("خطأ في السيرفر: لم يتم الحفظ"); }
+    });
 }
 
-async function deleteReport(id){
-    if(confirm("هل أنت متأكد من حذف هذا التقرير نهائياً؟")){
-        await deleteDoc(doc(db, "reports", id));
+window.clearFullMap = async function() {
+    let code = prompt("🔒 يرجى إدخال رمز الأمان الإداري لمسح كافة الرسوم عن الخريطة:");
+    if(code === "1029") {
+        const querySnapshot = await getDocs(collection(db, "tactical_map_shapes"));
+        querySnapshot.forEach(async (document) => { await deleteDoc(doc(db, "tactical_map_shapes", document.id)); });
+        alert("تم تنظيف وتفريغ رادار العمليات بنجاح ✅");
+    } else { alert("❌ الرمز خاطئ"); }
+};
+
+window.switchPage = function(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    let target = document.getElementById(pageId);
+    if(target) target.classList.add('active');
+    
+    let sidebarBtn = document.getElementById('btn-' + pageId);
+    if(sidebarBtn) sidebarBtn.classList.add('active');
+
+    if (pageId === 'tacticalMapPanel') {
+        initTacticalMap();
+        setTimeout(() => { map.invalidateSize(); }, 250);
     }
-}
+};
 </script>
-
 </body>
 </html>
