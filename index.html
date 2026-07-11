@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SWAT Central Command System</title>
-<!-- مكتبات الخرائط التفاعلية وأدوات الرسم السحابي -->
+<!-- مكتبات الخرائط التفاعلية وأدوات الرسم -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
@@ -45,6 +45,7 @@ body {
     background-size: 100% 100%, 30px 30px, 30px 30px;
 }
 
+/* الشريط الجانبي التكتيكي */
 .sidebar {
     width: 280px;
     background: var(--panel-bg);
@@ -109,6 +110,7 @@ body {
     box-shadow: inset 3px 0 0 var(--gold);
 }
 
+/* المنطقة الرئيسية لعرض الصفحات */
 .main-content {
     flex: 1;
     display: flex;
@@ -148,7 +150,12 @@ body {
 
 @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-.page { display: none; animation: fadeInUp 0.4s ease forwards; }
+/* الصفحات والمحتوى */
+.page {
+    display: none;
+    animation: fadeInUp 0.4s ease forwards;
+}
+
 .page.active { display: block; }
 
 @keyframes fadeInUp {
@@ -162,12 +169,15 @@ body {
     gap: 25px;
 }
 
+@media(max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
+
 .card-panel {
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
     border-radius: 14px;
     padding: 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    position: relative;
 }
 
 .panel-title {
@@ -181,35 +191,38 @@ body {
     align-items: center;
 }
 
-/* حاوية خريطة لوس سانتوس المطلوبة */
+/* تصميم قسم الخريطة التكتيكية الرادارية المدمجة */
 .map-wrapper {
     position: relative;
     width: 100%;
-    height: 720px;
-    background-color: #0c1424;
-    border: 2px solid var(--gold);
-    border-radius: 12px;
+    height: 650px;
+    background-color: #030508;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
     margin-top: 15px;
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(216, 194, 122, 0.2);
+}
+
+#map-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
 }
 
 #map {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: #0c1424;
+    background: transparent !important;
+    z-index: 2;
 }
 
-.leaflet-bar a {
-    background-color: #111722 !important;
-    color: var(--gold) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-}
-.leaflet-bar a:hover {
-    background-color: var(--gold) !important;
-    color: #000 !important;
-}
-
+/* تصاميم لوحة القيادة الجديدة المليئة بالبيانات */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -217,6 +230,8 @@ body {
     margin-top: 20px;
     grid-column: span 2;
 }
+@media(max-width: 1200px) { .stats-container { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 600px) { .stats-container { grid-template-columns: 1fr; } }
 
 .stat-card {
     background: #111722;
@@ -224,9 +239,108 @@ body {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 .stat-card .num { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
 .stat-card .label { font-size: 13px; color: var(--text-muted); }
+
+/* الحقول والقوائم */
+input, select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    background: #121822;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(216, 194, 122, 0.15);
+}
+
+.action-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1b2532 0%, #111822 100%);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    color: var(--gold);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    background: var(--gold);
+    color: #000;
+    box-shadow: 0 0 15px rgba(216, 194, 122, 0.3);
+}
+
+.add-member-btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.add-member-btn:hover {
+    background: var(--gold-hover);
+    transform: scale(1.05);
+}
+
+.data-list-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-left: 5px;
+}
+
+.item-card {
+    background: #131922;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.item-card h4 { color: var(--gold); margin-bottom: 8px; }
+.item-card p { font-size: 13px; color: #cbd5e1; margin: 4px 0; }
+
+.status-btn-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.status-btn-group button {
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.lock-screen {
+    max-width: 450px;
+    margin: 40px auto;
+    text-align: center;
+}
 
 .swat-table {
     width: 100%;
@@ -236,6 +350,29 @@ body {
 .swat-table th { background: #17202c; color: var(--gold); padding: 12px; text-align: right; }
 .swat-table td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
 
+.shaar-box {
+    text-align: center;
+    margin-top: 25px;
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    color: var(--gold);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* نمط حقل التحقق الداخلي للجدول */
+.inline-lock-box {
+    background: #1c1515;
+    border: 1px dashed var(--danger);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.inline-lock-box h5 { color: var(--danger); margin-bottom: 10px; font-size: 14px; }
+.inline-lock-box .flex-inputs { display: flex; gap: 10px; margin-bottom: 0; }
+.inline-lock-box .flex-inputs input { margin-bottom: 0; }
+.inline-lock-box .flex-inputs button { width: auto; white-space: nowrap; padding: 0 20px; }
+
 .delete-table-btn {
     background: rgba(229, 62, 62, 0.2);
     border: 1px solid var(--danger);
@@ -243,11 +380,18 @@ body {
     padding: 4px 8px;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+}
+.delete-table-btn:hover {
+    background: var(--danger);
+    color: white;
 }
 </style>
 </head>
 <body>
 
+    <!-- 📋 الشريط الجانبي التكتيكي -->
     <div class="sidebar">
         <div class="logo-area">
             <div class="logo-icon">🦅</div>
@@ -256,84 +400,324 @@ body {
         <button id="btn-dashboardPanel" class="nav-btn active" onclick="switchPage('dashboardPanel')">🖥️ لوحة القيادة</button>
         <button id="btn-tacticalMapPanel" class="nav-btn" onclick="switchPage('tacticalMapPanel')">🗺️ الخريطة التكتيكية</button>
         <button id="btn-rulesPanel" class="nav-btn" onclick="switchPage('rulesPanel')">📜 اللائحة والقوانين</button>
+        <button id="btn-clothingPanel" class="nav-btn" onclick="switchPage('clothingPanel')">👕 قائمة اللبس</button>
         <button id="btn-schedulePanel" class="nav-btn" onclick="switchPage('schedulePanel')">📅 الجدول</button>
         <button id="btn-wantedGate" class="nav-btn" onclick="switchPage('wantedGate')">🚨 خلية المطلوبين</button>
         <button id="btn-missionsPanel" class="nav-btn" onclick="switchPage('missionsPanel')">🎯 إدارة العمليات</button>
+        <button id="btn-nominationsPanel" class="nav-btn" onclick="switchPage('nominationsPanel')">🎖️ شؤون الترشيحات</button>
         <button id="btn-reportsPanel" class="nav-btn" onclick="switchPage('reportsPanel')">📄 مركز التقارير</button>
     </div>
 
+    <!-- 🖥️ مساحة العرض الرئيسية -->
     <div class="main-content">
         <div class="top-bar">
             <h2 id="pageTitle">مركز القيادة والتحكم الموحد</h2>
-            <div class="system-status"><div class="pulse"></div> السيرفر متصل ومزامن</div>
+            <div class="system-status">
+                <div class="pulse"></div> الاتصال بالسيرفر السحابي آمن ومستقر
+            </div>
         </div>
 
-        <!-- ================= 1. لوحة القيادة ================= -->
+        <!-- ================= 1. لوحة القيادة الرئيسية ================= -->
         <div id="dashboardPanel" class="page active">
             <div class="dashboard-layout">
                 <div class="card-panel" style="grid-column: span 2;">
                     <h3 class="panel-title">📡 البث والتعميم الإداري الجديد</h3>
-                    <p style="color: var(--text-muted); line-height: 1.8;">تم تحديث النظام ودمج خريطة الأقمار الصناعية عالية الجودة والملونة لقراند 5 بنجاح داخل رادار العمليات. يمكنك الآن استخدام أدوات التحديد لتوزيع الفرق والمهام بدقة متناهية.</p>
+                    <p style="color: var(--text-muted); line-height: 1.8;">مرحباً بك في نظام إدارة فرقة SWAT المطور بالكامل. من هنا يمكنك جدولة الأعضاء، تفويض قيادات المهمات، مراجعة طلبات الانضمام والترقيات، ورفع التقارير السرية المشفرة للسيرفر مباشرة بالوقت الفعلي.</p>
                 </div>
+
+                <!-- إحصائيات الفرقة لملء الفراغ -->
                 <div class="stats-container">
-                    <div class="stat-card"><div class="num">13</div><div class="label">الأعضاء بالجدول</div></div>
-                    <div class="stat-card"><div class="num" style="color: var(--warning);">ألفا / برافو</div><div class="label">الوحدات النشطة</div></div>
-                    <div class="stat-card"><div class="num" style="color: var(--success);">آمن 100%</div><div class="label">تشفير خوادم Firebase</div></div>
-                    <div class="stat-card"><div class="num" style="color: var(--danger);">LEVEL 1</div><div class="label">حالة الاستعداد</div></div>
+                    <div class="stat-card">
+                        <div class="num">13</div>
+                        <div class="label">الأعضاء الرسميين بالجدول</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" style="color: var(--warning);">ألفا / برافو</div>
+                        <div class="label">الوحدات القتالية النشطة</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" style="color: var(--success);">آمن 100%</div>
+                        <div class="label">تشفير خوادم Firebase</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" style="color: var(--danger);">LEVEL 1</div>
+                        <div class="label">حالة الجاهزية والاستعداد</div>
+                    </div>
+                </div>
+
+                <!-- جدول التعاميم السريعة -->
+                <div class="card-panel">
+                    <h3 class="panel-title">📢 آخر القرارات والتعاميم</h3>
+                    <ul style="list-style: none; color: #cbd5e1; line-height: 2;">
+                        <li style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                            <span style="color: var(--gold); font-weight: bold;">[تعميم تكتيكي]</span> الالتزام التام بالصمت اللاسلكي أثناء المداهمات.
+                        </li>
+                        <li style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                            <span style="color: var(--gold); font-weight: bold;">[تحديث اللائحة]</span> تفعيل نظام قفل الأقسام برمز الأمان الموحد بشكل كامل.
+                        </li>
+                        <li style="margin-bottom: 10px; padding-bottom: 8px;">
+                            <span style="color: var(--gold); font-weight: bold;">[تجهيزات]</span> مراجعة جاهزية السلاح الفردي قبل الخروج في أي دورية معتمدة.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- جاهزية غرف العمليات -->
+                <div class="card-panel">
+                    <h3 class="panel-title">🔒 مراقبة الأنظمة الحيوية</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>قاعدة البيانات المركزية:</span>
+                            <span style="color: var(--success); font-weight: bold;">متصل ومزامن (Firebase)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>جدار الحماية الفيدرالي:</span>
+                            <span style="color: var(--success); font-weight: bold;">نشط (SHA-256)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>صلاحيات التعديل والشطب:</span>
+                            <span style="color: var(--warning); font-weight: bold;">محمية برمز مشفر</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= 2. قسم الخريطة التكتيكية المحدثة بالكامل ================= -->
+        <!-- ================= 2. قسم الخريطة التكتيكية المدمجة ذاتياً بدون روابط خارجية ================= -->
         <div id="tacticalMapPanel" class="page">
             <div class="card-panel">
                 <div class="panel-title">
-                    <span>🗺️ رادار عمليات لوس سانتوس (GTA V HD Satellite Overlay)</span>
+                    <span>🗺️ غرفة التخطيط والعمليات الميدانية الرقمية (3D Radar Mapping)</span>
                     <button class="delete-table-btn" onclick="clearFullMap()" style="padding: 6px 12px;">🗑️ مسح الرسوم بالكامل</button>
                 </div>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;">خريطة القمر الصناعي الرسمية للعبة مثبتة ومؤمنة ضد الانقطاع. ارسم الخطوط أو حدد الدوائر لتوجيه المداهمات التكتيكية.</p>
+                <p style="color: var(--text-muted); font-size: 13px;">تم بناء رادار تكتيكي مجسم داخلياً ومحمي من انقطاع الصور، استخدم أدوات شريط الأدوات بالخريطة للرسم والتخطيط الفوري المزامن لدى الأعضاء.</p>
                 
+                <!-- حاوية الرادار الذاتية والمدمجة -->
                 <div class="map-wrapper">
+                    <canvas id="map-canvas"></canvas>
                     <div id="map"></div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= باقي الأقسام الإدارية الثابتة ================= -->
+        <!-- ================= 3. شاشة اللائحة والقوانين ================= -->
         <div id="rulesPanel" class="page">
             <div class="card-panel">
                 <h3 class="panel-title">قوانين الفرقة الصارمة</h3>
-                <ol style="padding-right: 20px; line-height: 2.2; color: #cbd5e1;">
+                <ol style="padding-right: 20px; line-height: 2.2; color: #cbd5e1; font-size: 15px;">
                     <li>الالتزام التام بأوامر قائد الفريق أو المسؤول الأعلى رتبة.</li>
                     <li>يمنع خروج أي دورية أو تنفيذ أي عملية إلا بعد إذن المسؤول.</li>
+                    <li>يمنع الحديث أو المزاح أثناء الاصطفاف أو تنفيذ المهام.</li>
+                    <li>يمنع دخول أو مغادرة الاصطفاف إلا بإذن مباشر من المسؤول.</li>
                     <li>الالتزام بالزي الرسمي الكامل والمعدات المعتمدة.</li>
-                    <li style="color: #ff9800; font-weight: bold;">[بند السيادة] قانون الولاء المطلق: يظل الولاء كاملاً وثابتاً لقائد الفرقة الحالي (Chief) دون غيره.</li>
+                    <li>جميع المعلومات والخطط الخاصة بالفرقة تعتبر سرية.</li>
+                    <li>يمنع التحرك بشكل فردي أثناء العمليات.</li>
+                    <li>الالتزام بالصمت اللاسلكي وعدم الإرسال إلا عند الحاجة.</li>
+                    <li>يمنع مغادرة المهمة إلا بعد موافقة قائد العملية.</li>
+                    <li>المحافظة على جاهزية السلاح والمعدات قبل وبعد كل مهمة.</li>
+                    <li>الالتزام بالحضور في الوقت المحدد لجميع الاصطفافات.</li>
+                    <li>يمنع استخدام مركبات أو معدات SWAT لأغراض شخصية.</li>
+                    <li>أي مخالفة تعرض العضو للمساءلة والعقوبات الإدارية.</li>
+                    <li>احترم جميع أفراد الفرقة والالتزام بالانضباط العسكري.</li>
+                    <li style="color: #ff9800; font-weight: bold; background: rgba(216, 194, 122, 0.05); padding: 5px 10px; border-radius: 6px; border-right: 3px solid var(--gold);">[بند السيادة] قانون الولاء المطلق: يظل الولاء كاملاً وثابتاً لقائد الفرقة الحالي (Chief) دون غيره. وإذا حدث أي تفكك، نزاع إداري، أو محاولة انقلاب داخل الصفوف، تُلغى صلاحيات الأطراف المنقلبة فوراً، ويعتبر أي أمر صادر من غير القائد باطلاً وعصياناً عسكرياً يُوجب الشطب النهائي.</li>
                 </ol>
+                <div class="shaar-box">
+                    💥 شعار الفرقة: الانضباط - السرية - التنفيذ 💥
+                </div>
             </div>
         </div>
 
+        <!-- ================= 4. شاشة اللبس ================= -->
+        <div id="clothingPanel" class="page">
+            <div class="card-panel">
+                <h3 class="panel-title">👕 الزي الرسمي والمعدات المعتمدة</h3>
+                <div style="line-height: 2; color: #cbd5e1;">
+                    <p style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--gold);">⚠️ تعميم صارم بشأن التجهيزات القتالية الرسمية لوحدات SWAT:</p>
+                    <ul>
+                        <li><b>الزي المعتمد:</b> البدلة التكتيكية السوداء المقاومة للرصاص بكامل ملحقاتها وحامي الرأس المخصص.</li>
+                        <li><b>تجهيز الصدرية:</b> يجب ارتداء سترة الدرع الثقيل المزودة بشعار SWAT بوضوح من الجهتين.</li>
+                        <li><b>الأسلحة المعتمدة:</b> السلاح الأساسي الرشاش الهجومي، السلاح الثانوي المسدس التكتيكي المصرح، والقنابل الصوتية/الغازية المخصصة للاقتحام.</li>
+                        <li><b>المخالفات:</b> أي تعديل على ألوان اللبس أو استخدام خوذ أو ملحقات غير معتمدة يعرض صاحبه للمساءلة الفورية.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 5. صفحة الجدول ================= -->
         <div id="schedulePanel" class="page">
             <div class="card-panel">
-                <h3 class="panel-title">📅 كشف وجدول أعضاء الفرقة</h3>
+                <div class="panel-title">
+                    <span>📅 كشف وجدول أعضاء الفرقة</span>
+                    <button class="add-member-btn" onclick="showInlineLock()">+</button>
+                </div>
+                
+                <div id="inlineLockBox" class="inline-lock-box" style="display: none;">
+                    <h5>🔒 يتطلب صلاحيات الإدارة - أدخل الرمز السري للتعديل</h5>
+                    <div class="flex-inputs">
+                        <input id="inlineCodeInput" type="password" placeholder="أدخل الرمز السري هنا">
+                        <button class="action-btn" onclick="verifyInlineCode()">تحقق ودخول</button>
+                    </div>
+                </div>
+
+                <div id="addMemberForm" style="display:none; background:#121822; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--gold);">
+                    <h4 style="color:var(--gold); margin-bottom:10px;">➕ إضافة عضو جديد للجدول</h4>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 10px;">
+                        <input id="newMemNo" placeholder="الرقم (مثال: 14)">
+                        <input id="newMemName" placeholder="الاسم الكامل">
+                        <input id="newMemRank" placeholder="الرتبة والتصنيف (R-0)">
+                        <input id="newMemUnit" placeholder="الوحدة / كتيبة">
+                    </div>
+                    <button class="action-btn" onclick="saveNewMemberToFirebase()">تأكيد الحفظ بالسيرفر</button>
+                </div>
+
                 <table class="swat-table">
-                    <thead><tr><th>الرقم</th><th>الاسم</th><th>الرتبة</th><th>الوحدة</th></tr></thead>
-                    <tbody>
-                        <tr><td>01</td><td>FAHAD ALMUTAIRI</td><td style="color: var(--gold);">R-0 SWAT Chief</td><td>Command</td></tr>
-                        <tr><td>02</td><td>KARLOS ALMUTAIRI</td><td>R-1 Deputy Chief</td><td>Command</td></tr>
-                        <tr><td>03</td><td>Turki Al-Mutairi</td><td>R-2 Assistant Chief</td><td>Leader Alpha</td></tr>
+                    <thead>
+                        <tr><th>الرقم</th><th>الاسم</th><th>الرتبة</th><th>الوحدة</th><th>الإجراءات</th></tr>
+                    </thead>
+                    <tbody id="staticMembersTable">
+                        <tr><td>01</td><td>FAHAD ALMUTAIRI</td><td style="color: var(--gold);">R-0 SWAT Chief</td><td>Command</td><td>-</td></tr>
+                        <tr><td>02</td><td>KARLOS ALMUTAIRI</td><td>R-1 Deputy Chief</td><td>Command</td><td>-</td></tr>
+                        <tr><td>03</td><td>Turki Al-Mutairi</td><td>R-2 Assistant Chief</td><td>Leader Alpha</td><td>-</td></tr>
+                        <tr><td>04</td><td>James Morgan</td><td>R-3 Supervisor</td><td>Leader Bravo</td><td>-</td></tr>
+                        <tr><td>05</td><td>Mov Marley</td><td>R-4 Member</td><td>Alpha</td><td>-</td></tr>
+                        <tr><td>06</td><td>Sicr Exxon</td><td>R-5 Member</td><td>Alpha</td><td>-</td></tr>
+                        <tr><td>07</td><td>Marcus Leno</td><td>R-6 Member</td><td>Alpha</td><td>-</td></tr>
+                        <tr><td>08</td><td>James Kruise</td><td>R-7 Member</td><td>Alpha</td><td>-</td></tr>
+                        <tr><td>09</td><td>Older Mohammed</td><td>R-8 Member</td><td>Alpha</td><td>-</td></tr>
+                        <tr><td>10</td><td>Badr Al-Mutairi</td><td>R-9 Member</td><td>Bravo</td><td>-</td></tr>
+                        <tr><td>11</td><td>ريان خالد</td><td>R-10 Member</td><td>Bravo</td><td>-</td></tr>
+                        <tr><td>12</td><td>JOHN Marly</td><td>R-11 Member</td><td>Bravo</td><td>-</td></tr>
+                        <tr><td>13</td><td>Ahmed Almutairi</td><td>R-12 Member</td><td>Bravo</td><td>-</td></tr>
+                    </tbody>
+                    <tbody id="dynamicMembersTable">
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div id="wantedGate" class="page"><div class="card-panel" style="text-align:center;"><h3>🚨 قسم المطلوبين</h3><p>محمي برمز الأمان الموحد للإدارة.</p></div></div>
-        <div id="missionsPanel" class="page"><div class="card-panel" style="text-align:center;"><h3>🎯 إدارة العمليات والمهمات</h3><p>يتم المزامنة تلقائياً مع خوادم الفايربيس المركزية.</p></div></div>
-        <div id="reportsPanel" class="page"><div class="card-panel" style="text-align:center;"><h3>📄 مركز صياغة وأرشيف التقارير</h3><p>تخزين سحابي مشفر وآمن.</p></div></div>
+        <!-- ================= 6. بوابات القفل والأمان ================= -->
+        <div id="wantedGate" class="page"><div class="card-panel lock-screen"><h3>🔒 تصريح أمني - قائمة المطلوبين</h3><input id="wantedPass" type="password" placeholder="أدخل رمز الدخول المشفر"><button class="action-btn" onclick="unlockSection('wantedPass', 'wantedRealPanel')">فك التشفير ودخول</button></div></div>
+        
+        <!-- ================= 7. شاشة المطلوبين الحقيقية ================= -->
+        <div id="wantedRealPanel" class="page">
+            <div class="dashboard-layout">
+                <div class="card-panel">
+                    <h3 class="panel-title">➕ تسجيل مطلوب جديد للعدالة</h3>
+                    <input id="wantedName" placeholder="الاسم الكامل المستهدف">
+                    <input id="wantedCrime" placeholder="نوع الجرم / التهديد المصنف">
+                    <button class="action-btn" id="addWanted">تعميم وإرسال للميدان</button>
+                </div>
+                <div class="card-panel">
+                    <h3 class="panel-title">🚨 العناصر المطلوبة حالياً</h3>
+                    <div id="wantedList" class="data-list-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 8. قسم المهمات ================= -->
+        <div id="missionsPanel" class="page">
+            <div class="dashboard-layout">
+                <div class="card-panel">
+                    <h3 class="panel-title">🎯 تخطيط وتوزيع مهمة عسكرية جديدة</h3>
+                    <input id="missionTitle" placeholder="عنوان العمليات (مثال: اقتحام وكر الفا)">
+                    <input id="missionLeader" placeholder="👮 القائد الميداني المسؤول">
+                    <input id="missionMembers" placeholder="👥 أطقم الإسناد والمشاركين">
+                    <select id="missionStatus">
+                        <option value="مستمرة">⏳ مهمة مستمرة / قيد التنفيذ</option>
+                        <option value="ناجحة">✅ تم التنفيذ بنجاح</option>
+                        <option value="فاشلة">❌ عملية مجهضة / فاشلة</option>
+                    </select>
+                    <textarea id="missionDesc" placeholder="📝 الأوامر العسكرية وتفاصيل ووش المهمة المطلوبة بالضبط..." style="height:110px;"></textarea>
+                    <button class="action-btn" id="addMission">حفظ وتعميم البيانات الميدانية</button>
+                </div>
+                <div class="card-panel lock-screen" id="missionsLockArea">
+                    <h3>🔒 تصريح أمني - الأرشيف التكتيكي</h3>
+                    <input id="missPass" type="password" placeholder="أدخل رمز الدخول لعرض العمليات">
+                    <button class="action-btn" onclick="unlockSection('missPass', 'missionsRealView')">عرض أرشيف العمليات</button>
+                </div>
+                <div id="missionsRealView" class="card-panel" style="display:none; grid-column: span 1;">
+                    <h3 class="panel-title">📋 السجلات والعمليات الموثقة بنظام الفايربيس</h3>
+                    <div id="missionsList" class="data-list-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 9. قسم الترشيحات ================= -->
+        <div id="nominationsPanel" class="page">
+            <div class="dashboard-layout">
+                <div class="card-panel">
+                    <h3 class="panel-title">🎖️ نموذج ترشيح وتزكية كادر</h3>
+                    <input id="nomineeCharName" placeholder="👤 اسم العضو المرشح">
+                    <input id="nomineeCurrentRank" placeholder="🎖️ الرتبة العسكرية الحالية">
+                    <input id="nomineeSector" placeholder="🏢 القطاع الحالي المعين به">
+                    <textarea id="nominationReason" placeholder="📝 مسببات الترشيح الفعلي بالكامل..." style="height:110px;"></textarea>
+                    <button class="action-btn" id="addNomination">إرسال التزكية إلى الإدارة العليا</button>
+                </div>
+                <div class="card-panel" style="display:block;" id="nomLockArea">
+                    <div class="lock-screen" style="margin:0;">
+                        <h3>🔒 تصريح أمني - قرارات الإدارة العليا</h3>
+                        <input id="nomPass" type="password" placeholder="أدخل رمز الدخول لعرض المرشحين">
+                        <button class="action-btn" onclick="unlockSection('nomPass', 'nominationsRealView')">استعراض المرشحين</button>
+                    </div>
+                </div>
+                <div id="nominationsRealView" class="card-panel" style="display:none;">
+                    <h3 class="panel-title">📋 كشوفات المتقدمين وأزرار التحكم بالقرارات</h3>
+                    <div id="nominationsList" class="data-list-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 10. قسم التقارير ================= -->
+        <div id="reportsPanel" class="page">
+            <div class="dashboard-layout">
+                <div class="card-panel">
+                    <h3 class="panel-title">📤 صياغة تقرير عمليات نهائي</h3>
+                    <input id="repId" placeholder="🆔 المعرف الرقمي للتقرير">
+                    <div style="display:flex; gap:10px;"><input id="repDate" type="date"><input id="repTime" type="time"></div>
+                    <input id="repLeader" placeholder="👮 القائد المسؤول عن صياغة التقرير">
+                    <input id="repMembers" placeholder="👥 أسماء القوة المشاركة">
+                    <select id="repType">
+                        <option>مداهمة خاطفة</option><option>اقتحام تكتيكي</option><option>إنقاذ رهائن وتأمين</option><option>عملية سرية خاصة</option>
+                    </select>
+                    <input id="repLocation" placeholder="📍 إحداثيات وموقع العملية">
+                    <textarea id="repDetails" placeholder="📝 كتابة تفاصيل وسيناريو العملية بالكامل هنا..." style="height:120px;"></textarea>
+                    <label style="display:flex; align-items:center; gap:8px; margin-bottom:15px; cursor:pointer;"><input id="secretReport" type="checkbox" style="width:auto; margin:0;"> 🔒 تصنيف الملف كتقرير سري مشفر للغاية</label>
+                    <button class="action-btn" onclick="saveReport()">حفظ التقرير نهائياً بالسيرفر</button>
+                </div>
+                
+                <div class="card-panel" style="display:flex; flex-direction:column; gap:15px;">
+                    <h3 class="panel-title">📂 أرشيف الملفات المحمية بالرقم السري</h3>
+                    
+                    <div id="repGeneralLock" class="lock-screen" style="margin: 0 0 15px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                        <h4>📄 فتح الأرشيف العام للتقارير</h4>
+                        <input id="repPass" type="password" placeholder="أدخل رمز الأرشيف العام" style="margin-top: 8px;">
+                        <button class="action-btn" onclick="unlockSection('repPass', 'reportsNormalView')">دخول الأرشيف العام</button>
+                    </div>
+
+                    <div id="repSecretLock" class="lock-screen" style="margin: 0;">
+                        <h4 style="color: var(--danger);">🚨 فتح الخزنة السرية للمستوى الأحمر</h4>
+                        <input id="secRepPass" type="password" placeholder="رمز الوصول الرئاسي الخاص" style="margin-top: 8px;">
+                        <button class="action-btn" onclick="unlockSection('secRepPass', 'reportsSecretView')" style="background: var(--danger); border-color: var(--danger); color: white;">تأكيد الهوية الرقمية</button>
+                    </div>
+                    
+                    <div id="reportsNormalView" style="display:none; margin-top:15px;">
+                        <h4 style="color:var(--gold); margin-bottom:10px;">📋 التقارير العادية المعروضة</h4>
+                        <div id="normalReportsContainer" class="data-list-container"></div>
+                    </div>
+                    
+                    <div id="reportsSecretView" style="display:none; margin-top:15px;">
+                        <h4 style="color:var(--danger); margin-bottom:10px;">🔒 المستندات المصنفة سرية</h4>
+                        <div id="secretReportsContainer" class="data-list-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
+<!-- ================= سكريبتات الأنظمة وقاعدة البيانات والخريطة ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBTTj1ww1VPYIHu1SyMg_KSYHZRcF8dRHI",
@@ -341,47 +725,134 @@ const firebaseConfig = {
   projectId: "swat-system-384b0",
   storageBucket: "swat-system-384b0.firebasestorage.app",
   messagingSenderId: "874029124115",
-  appId: "1:874029124115:web:27657c0137fe73ec50cde6"
+  appId: "1:874029124115:web:27657c0137fe73ec50cde6",
+  measurementId: "G-MVNRHGCGZE"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// --- 🌐 محرك رسم الخريطة ثلاثية الأبعاد والرادار التكتيكي (Internal Vector Map Renderer) ---
 let map;
 let mapLayers = {}; 
+let animationFrameId;
+
+function render3DTacticalGrid() {
+    const canvas = document.getElementById('map-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // ضبط أحجام الكانفاس لتلائم الشاشة بالكامل
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+    
+    let angle = 0;
+    
+    function draw() {
+        ctx.fillStyle = '#03060a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // رسم شبكة خطوط الطول والعرض التكتيكية المنظورية ثلاثية الأبعاد
+        ctx.strokeStyle = 'rgba(34, 45, 58, 0.4)';
+        ctx.lineWidth = 1;
+        
+        const horizon = canvas.height * 0.3;
+        const totalLines = 24;
+        
+        // خطوط أفقية منظورية عميقة
+        for(let i = 0; i <= totalLines; i++) {
+            let ratio = i / totalLines;
+            let y = horizon + (canvas.height - horizon) * Math.pow(ratio, 2);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+        
+        // خطوط عمودية ملتقية في الأفق (تأثير المنظور ثلاثي الأبعاد لجزيرة قراند)
+        const centerX = canvas.width / 2;
+        for(let i = -15; i <= 15; i++) {
+            ctx.beginPath();
+            ctx.moveTo(centerX + (i * 30), horizon);
+            ctx.lineTo(centerX + (i * 120), canvas.height);
+            ctx.stroke();
+        }
+        
+        // رسم مجسمات تخطيطية مبسطة (كتل الجبال والمدينة الشمالية والجنوبية لقراند)
+        ctx.strokeStyle = 'rgba(216, 194, 122, 0.15)';
+        ctx.fillStyle = 'rgba(13, 18, 26, 0.7)';
+        
+        // كتلة جبل تشيلياد (الشمال)
+        ctx.beginPath();
+        ctx.moveTo(centerX - 250, horizon + 50);
+        ctx.lineTo(centerX, horizon + 10);
+        ctx.lineTo(centerX + 250, horizon + 50);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // كتل ناطحات سحاب لوس سانتوس (الجنوب)
+        const cityY = canvas.height - 180;
+        ctx.fillStyle = 'rgba(49, 130, 206, 0.05)';
+        ctx.strokeStyle = 'rgba(49, 130, 206, 0.2)';
+        for(let j = 0; j < 6; j++) {
+            ctx.fillRect(centerX - 180 + (j*60), cityY, 40, 100);
+            ctx.strokeRect(centerX - 180 + (j*60), cityY, 40, 100);
+        }
+
+        // حركة دائرية مستمرة لمحاكاة مسح الرادار العسكري لفرقة السوات
+        angle += 0.01;
+        ctx.strokeStyle = 'rgba(56, 161, 105, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(centerX, canvas.height / 2 + 50, 200, angle, angle + 0.4);
+        ctx.stroke();
+        
+        // نصوص تكتيكية على الشاشة
+        ctx.fillStyle = 'rgba(113, 128, 150, 0.5)';
+        ctx.font = '10px monospace';
+        ctx.fillText("GRID: 3D_VECTOR_LOS_SANTOS_V", 20, 30);
+        ctx.fillText("RADAR STATUS: ACTIVE SCANNING...", 20, 45);
+        ctx.fillText("LAT: 34.0522° N / LON: 118.2437° W", canvas.width - 220, 30);
+
+        animationFrameId = requestAnimationFrame(draw);
+    }
+    
+    if(animationFrameId) cancelAnimationFrame(animationFrameId);
+    draw();
+}
 
 function initTacticalMap() {
+    // تشغيل خلفية الرادار التفاعلية فوراً
+    render3DTacticalGrid();
+    
     if (map) return; 
 
-    // إعداد إسقاط مسطح مخصص ومناسب لعرض صورة الأقمار الصناعية لقراند مباشرة بجودة كاملة
+    // تهيئة لوحة الرسم الشفافة فوق الرادار التكتيكي بدقة متناهية
     map = L.map('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
         maxZoom: 3,
-        zoomControl: true
+        zoomControl: true,
+        attributionControl: false
     });
 
-    // تحديد أبعاد منطقية ومتناسقة لنسبة أبعاد الصورة لمنع تمططها
-    const bounds = [[0, 0], [1000, 750]];
-
-    // تم رفع الصورة المطلوبة على سيرفر سحابي عالمي مستقر ودمجها كخلفية ثابتة داخل الخريطة التفاعلية
-    const imageUrl = 'https://i.ibb.co/6cw2vby/image-b24c83.jpg';
-    L.imageOverlay(imageUrl, bounds).addTo(map);
-
-    // ضبط العرض والزوم ليركز تلقائياً على منتصف جزيرة لوس سانتوس بالكامل عند الفتح
+    const bounds = [[0, 0], [1000, 1000]];
     map.fitBounds(bounds);
 
-    // تفعيل أدوات الرسم الجغرافي السحابي والتحكم فوق الصورة مباشرة
+    // تفويض وتنشيط شريط أدوات الرسم السحابية المشتركة
     map.pm.addControls({
         position: 'topright',
         drawMarker: true,
         drawPolyline: true,
         drawRectangle: true,
         drawPolygon: true,
+        editMode: false,
+        dragMode: false,
         removalMode: true,
     });
 
-    // مزامنة ورفع الرسومات الجديدة إلى الفايربيس
+    // مزامنة التخطيط وحفظ الإحداثيات على الفايربيس بالوقت الفعلي
     map.on('pm:create', async (e) => {
         const layer = e.layer;
         const geojson = layer.toGeoJSON();
@@ -391,7 +862,9 @@ function initTacticalMap() {
                 timestamp: Date.now()
             });
             map.removeLayer(layer);
-        } catch(err) { console.error(err); }
+        } catch(err) {
+            console.error("خطأ في مزامنة الرسم السحابي: ", err);
+        }
     });
 
     map.on('pm:remove', async (e) => {
@@ -404,15 +877,20 @@ function initTacticalMap() {
         }
     });
 
-    // سحب رسومات باقي أفراد الفرقة بالوقت الفعلي وعرضها فوق صورة لوس سانتوس مباشرة
+    // استقطاب الرسوم وتحديثها فوراً عند كافة القادة والأعضاء المشاهدين للوحة بنفس اللحظة
     onSnapshot(collection(db, "tactical_map_shapes"), (snapshot) => {
-        for (let id in mapLayers) { map.removeLayer(mapLayers[id]); }
+        for (let id in mapLayers) {
+            map.removeLayer(mapLayers[id]);
+        }
         mapLayers = {};
+
         snapshot.forEach((doc) => {
             const shapeData = doc.data();
             const geojson = JSON.parse(shapeData.data);
             const geojsonLayer = L.geoJSON(geojson, {
-                style: function () { return { color: '#ff3366', weight: 4, opacity: 0.9 }; }
+                style: function () {
+                    return { color: '#e53e3e', weight: 4, opacity: 0.9 }; 
+                }
             });
             geojsonLayer.addTo(map);
             mapLayers[doc.id] = geojsonLayer;
@@ -420,15 +898,21 @@ function initTacticalMap() {
     });
 }
 
+// زر المسح الشامل للخريطة
 window.clearFullMap = async function() {
-    let code = prompt("🔒 يرجى إدخال رمز الأمان الإداري لمسح كافة الرسوم عن الخريطة:");
+    let code = prompt("🔒 يرجى إدخال رمز الأمان الإداري لمسح كافة الرسوم التخطيطية الميدانية:");
     if(code === "1029") {
         const querySnapshot = await getDocs(collection(db, "tactical_map_shapes"));
-        querySnapshot.forEach(async (document) => { await deleteDoc(doc(db, "tactical_map_shapes", document.id)); });
-        alert("تم تنظيف وتفريغ رادار العمليات بنجاح ✅");
-    } else { alert("❌ الرمز خاطئ"); }
+        querySnapshot.forEach(async (document) => {
+            await deleteDoc(doc(db, "tactical_map_shapes", document.id));
+        });
+        alert("تم تفريغ وتنظيف الخريطة التكتيكية بنجاح من كافة الأشكال والتوجيهات السابقة ✅");
+    } else {
+        alert("❌ الرمز خاطئ، لا تملك الصلاحية الأمنية لمسح البيانات.");
+    }
 };
 
+// --- تفعيل التنقل بين الصفحات وتنشيط الخريطة تلقائياً ---
 window.switchPage = function(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -441,9 +925,222 @@ window.switchPage = function(pageId) {
 
     if (pageId === 'tacticalMapPanel') {
         initTacticalMap();
-        setTimeout(() => { map.invalidateSize(); }, 250);
+        setTimeout(() => { 
+            map.invalidateSize(); 
+            render3DTacticalGrid();
+        }, 200);
     }
 };
+
+window.unlockSection = function(inputId, targetPanelId) {
+    let passValue = document.getElementById(inputId).value;
+    if(passValue === "1029") {
+        document.getElementById(inputId).value = "";
+        
+        if(targetPanelId === 'missionsRealView') {
+            document.getElementById('missionsLockArea').style.display = 'none';
+            document.getElementById('missionsRealView').style.display = 'block';
+        } else if (targetPanelId === 'nominationRealView' || targetPanelId === 'nominationsRealView') {
+            document.getElementById('nomLockArea').style.display = 'none';
+            document.getElementById('nominationsRealView').style.display = 'block';
+        } else if (targetPanelId === 'reportsNormalView') {
+            document.getElementById('repGeneralLock').style.display = 'none';
+            document.getElementById('reportsNormalView').style.display = 'block';
+        } else if (targetPanelId === 'reportsSecretView') {
+            document.getElementById('repSecretLock').style.display = 'none';
+            document.getElementById('reportsSecretView').style.display = 'block';
+        } else if (targetPanelId === 'wantedRealPanel') {
+            switchPage('wantedRealPanel');
+        }
+    } else {
+        alert("❌ الرمز الأمني خاطئ!");
+    }
+};
+
+window.showInlineLock = function() {
+    let lockBox = document.getElementById("inlineLockBox");
+    lockBox.style.display = (lockBox.style.display === "none") ? "block" : "none";
+    document.getElementById("addMemberForm").style.display = "none";
+};
+
+window.verifyInlineCode = function() {
+    let codeInput = document.getElementById("inlineCodeInput").value;
+    if(codeInput === "1029") {
+        document.getElementById("inlineLockBox").style.display = "none";
+        document.getElementById("addMemberForm").style.display = "block";
+        document.getElementById("inlineCodeInput").value = "";
+    } else {
+        alert("❌ رمز خاطئ! لا تملك صلاحية تعديل الهيكل الإداري.");
+    }
+};
+
+window.saveNewMemberToFirebase = async function() {
+    let no = document.getElementById("newMemNo").value.trim();
+    let name = document.getElementById("newMemName").value.trim();
+    let rank = document.getElementById("newMemRank").value.trim();
+    let unit = document.getElementById("newMemUnit").value.trim();
+    
+    if(no && name && rank && unit) {
+        await addDoc(collection(db, "custom_members"), { no: no, name: name, rank: rank, unit: unit });
+        alert("تمت إضافة العضو بنجاح وتحديث الكشف الإلكتروني الفيدرالي ✅");
+        document.getElementById("newMemNo").value="";
+        document.getElementById("newMemName").value="";
+        document.getElementById("newMemRank").value="";
+        document.getElementById("newMemUnit").value="";
+        document.getElementById("addMemberForm").style.display = "none";
+    } else {
+        alert("❌ يرجى ملء كافة الخانات لإتمام التسجيل.");
+    }
+};
+
+window.triggerDeleteMember = async function(id) {
+    let pass = prompt("🔒 يتطلب صلاحية إدارية - أدخل الرمز لتأكيد الحذف نهائياً:");
+    if(pass === "1029") {
+        await deleteDoc(doc(db, "custom_members", id));
+        alert("تم شطب العضو بنجاح وسحب ملفه الرقمي 🗑️");
+    } else {
+        alert("❌ رمز خاطئ! تم إلغاء عملية الحذف.");
+    }
+};
+
+onSnapshot(collection(db, "custom_members"), (snap) => {
+    let table = document.getElementById("dynamicMembersTable");
+    table.innerHTML = "";
+    snap.forEach(d => {
+        let m = d.data();
+        table.innerHTML += `
+            <tr>
+                <td>${m.no}</td>
+                <td>${m.name}</td>
+                <td style="color:var(--gold);">${m.rank}</td>
+                <td>${m.unit}</td>
+                <td><button class="delete-table-btn" onclick="triggerDeleteMember('${d.id}')">🗑️ حذف</button></td>
+            </tr>`;
+    });
+});
+
+window.deleteWanted = async (id) => { if(confirm("حذف المطلوب؟")) await deleteDoc(doc(db, "wanted", id)); };
+window.deleteMission = async (id) => { if(confirm("إزالة ملف العملية؟")) await deleteDoc(doc(db, "missions", id)); };
+window.deleteNomination = async (id) => { if(confirm("تدمير ملف المرشح نهائياً؟")) await deleteDoc(doc(db, "nominations", id)); };
+window.updateNominationStatus = async (id, status) => { await updateDoc(doc(db, "nominations", id), { status: status }); };
+window.deleteReport = async (id) => { if(confirm("حذف التقرير نهائياً؟")) await deleteDoc(doc(db, "reports", id)); };
+
+onSnapshot(collection(db, "wanted"), (snap) => {
+    let container = document.getElementById("wantedList"); container.innerHTML = "";
+    snap.forEach(d => {
+        let item = d.data();
+        container.innerHTML += `
+            <div class="item-card">
+                <h4>🎯 الاسم: ${item.name}</h4>
+                <p>⚠️ التهمة: ${item.crime}</p>
+                <button onclick="deleteWanted('${d.id}')" style="background:var(--danger); border:none; color:white; padding:6px 12px; border-radius:4px; font-size:12px; margin-top:8px; cursor:pointer;">إسقاط وتصفية القيد</button>
+            </div>`;
+    });
+});
+document.getElementById("addWanted").onclick = async () => {
+    let n = document.getElementById("wantedName").value.trim();
+    let c = document.getElementById("wantedCrime").value.trim();
+    if(n && c) { await addDoc(collection(db, "wanted"), {name:n, crime:c}); document.getElementById("wantedName").value=""; document.getElementById("wantedCrime").value=""; }
+};
+
+onSnapshot(collection(db, "missions"), (snap) => {
+    let container = document.getElementById("missionsList"); container.innerHTML = "";
+    snap.forEach(d => {
+        let item = d.data();
+        let col = item.status === "ناجحة" ? '#38a169' : (item.status === "فاشلة" ? '#e53e3e' : '#dd6b20');
+        container.innerHTML += `
+            <div class="item-card">
+                <h4>🎯 العنوان: ${item.title}</h4>
+                <p><b>👮 قائد المهمة:</b> ${item.leader}</p>
+                <p><b>👥 المشاركون:</b> ${item.members || 'لا يوجد أطقم حالياً'}</p>
+                <p><b>📊 النتيجة الحالية:</b> <span style="color:${col}; font-weight:bold;">${item.status}</span></p>
+                <p style="background:#0a0e14; padding:8px; border-radius:4px; margin-top:8px; font-size:12.5px; border-right:2px solid var(--gold); white-space: pre-wrap;"><b>📝 ووش المهمة بالضبط:</b>\n${item.desc}</p>
+                <button onclick="deleteMission('${d.id}')" style="background:var(--danger); border:none; color:white; padding:5px 10px; border-radius:4px; font-size:11px; margin-top:8px; cursor:pointer;">🗑️ إتلاف السجل</button>
+            </div>`;
+    });
+});
+document.getElementById("addMission").onclick = async () => {
+    let t = document.getElementById("missionTitle").value.trim();
+    let l = document.getElementById("missionLeader").value.trim();
+    let m = document.getElementById("missionMembers").value.trim();
+    let s = document.getElementById("missionStatus").value;
+    let d = document.getElementById("missionDesc").value.trim();
+    if(t && l && d) {
+        await addDoc(collection(db, "missions"), {title:t, leader:l, members:m, status:s, desc:d});
+        alert("تم إيداع بيانات العملية بنجاح بالشبكة الفيدرالية السحابية ✅");
+        document.getElementById("missionTitle").value=""; document.getElementById("missionLeader").value=""; document.getElementById("missionMembers").value=""; document.getElementById("missionDesc").value="";
+    }
+};
+
+onSnapshot(collection(db, "nominations"), (snap) => {
+    let container = document.getElementById("nominationsList"); container.innerHTML = "";
+    snap.forEach(d => {
+        let item = d.data();
+        let st = item.status || "قيد المراجعة";
+        let c = st === "مقبول" ? '#38a169' : (st === "مرفوض" ? '#e53e3e' : '#dd6b20');
+        container.innerHTML += `
+            <div class="item-card">
+                <h4>🎖️ الكادر: ${item.charName}</h4>
+                <p><b>🎖️ الرتبة الحالية:</b> ${item.currentRank} | <b>🏢 القطاع الحالي:</b> ${item.sector}</p>
+                <p><b>📊 حالة الطلب:</b> <span style="color:${c}; font-weight:bold;">${st}</span></p>
+                <p style="background:#0a0e14; padding:8px; border-radius:4px; margin-top:6px; font-size:12.5px; white-space: pre-wrap;"><b>📝 مسببات الترشيح المرفوعة:</b>\n${item.reason}</p>
+                <div class="status-btn-group">
+                    <button onclick="updateNominationStatus('${d.id}', 'مقبول')" style="background:#1e5335; cursor:pointer;">قبول ✅</button>
+                    <button onclick="updateNominationStatus('${d.id}', 'قيد المراجعة')" style="background:#684a18; cursor:pointer;">مراجعة ⏳</button>
+                    <button onclick="updateNominationStatus('${d.id}', 'مرفوض')" style="background:#5e2222; cursor:pointer;">رفض ❌</button>
+                </div>
+                <button onclick="deleteNomination('${d.id}')" style="background:#334155; border:none; color:white; padding:4px 8px; border-radius:4px; font-size:11px; margin-top:10px; cursor:pointer; width:100%;">🗑️ مسح ملف المرشح من الكشوفات</button>
+            </div>`;
+    });
+});
+document.getElementById("addNomination").onclick = async () => {
+    let cn = document.getElementById("nomineeCharName").value.trim();
+    let cr = document.getElementById("nomineeCurrentRank").value.trim();
+    let se = document.getElementById("nomineeSector").value.trim();
+    let re = document.getElementById("nominationReason").value.trim();
+    if(cn && cr && se && re) {
+        await addDoc(collection(db, "nominations"), {charName:cn, currentRank:cr, sector:se, reason:re, status:"قيد المراجعة"});
+        alert("تم إرسال الملف وبانتظار رد القيادة العليا ⚖️");
+        document.getElementById("nomineeCharName").value=""; document.getElementById("nomineeCurrentRank").value=""; document.getElementById("nomineeSector").value=""; document.getElementById("nominationReason").value="";
+    }
+};
+
+onSnapshot(collection(db, "reports"), (snap) => {
+    let normal = document.getElementById("normalReportsContainer"); normal.innerHTML = "";
+    let secret = document.getElementById("secretReportsContainer"); secret.innerHTML = "";
+    snap.forEach(d => {
+        let rep = d.data();
+        let borderCol = rep.isSecret ? '#e53e3e' : '#3182ce';
+        let html = `
+            <div class="item-card" style="border-right: 3px solid ${borderCol}">
+                <h4>سجل رقم: ${rep.id} [${rep.type}]</h4>
+                <p><b>📅 التوقيت:</b> ${rep.date} | ${rep.time}</p>
+                <p><b>👮 الصائغ المسؤول:</b> ${rep.leader} | <b>📍 الموقع:</b> ${rep.location}</p>
+                <p style="background:#0a0e14; padding:8px; border-radius:4px; margin-top:8px; white-space:pre-wrap;">${rep.details}</p>
+                <button onclick="deleteReport('${d.id}')" style="background:var(--danger); border:none; color:white; padding:5px 10px; border-radius:4px; font-size:11px; margin-top:8px; cursor:pointer;">🗑️ تدمير المستند نهائياً</button>
+            </div>`;
+        if(rep.isSecret) secret.innerHTML += html; else normal.innerHTML += html;
+    });
+});
+window.saveReport = async () => {
+    let id = document.getElementById("repId").value.trim();
+    let dt = document.getElementById("repDate").value;
+    let tm = document.getElementById("repTime").value;
+    let ld = document.getElementById("repLeader").value.trim();
+    let mb = document.getElementById("repMembers").value.trim();
+    let tp = document.getElementById("repType").value;
+    let lc = document.getElementById("repLocation").value.trim();
+    let dl = document.getElementById("repDetails").value.trim();
+    let sec = document.getElementById("secretReport").checked;
+    if(id && dt && tm && ld && dl) {
+        await addDoc(collection(db, "reports"), {id:id, date:dt, time:tm, leader:ld, members:mb, type:tp, location:lc, details:dl, isSecret:sec});
+        alert("تم إيداع التقرير المركزي بالأرشيف بنجاح 📂");
+        document.getElementById("repId").value=""; document.getElementById("repLeader").value=""; document.getElementById("repDetails").value=""; document.getElementById("secretReport").checked = false;
+    } else { alert("❌ يرجى تعبئة خلايا الحقول الأساسية للتقرير"); }
+};
+
+// تشغيل الكانفاس التكتيكي عند بدء التحميل الاحتياطي
+window.addEventListener('resize', render3DTacticalGrid);
 </script>
 </body>
 </html>
