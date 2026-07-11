@@ -327,7 +327,7 @@ transition: border-color 0.3s;
     <!-- شاشة عرض التقارير العادية -->
     <div id="reportsList" class="page">
         <h1>📂 عرض التقارير العادية</h1>
-        <div id="normalReportsContainer"><p style="text-align:center;color:#aaa;">لا توجد تقارير حالياً.</p></div>
+        <div id="normalReportsContainer"><p style="text-align:center;color:#aaa;">جاري تحميل التقارير...</p></div>
         <button class="back" onclick="show('reports')">رجوع</button>
     </div>
 
@@ -354,16 +354,42 @@ transition: border-color 0.3s;
     <!-- شاشة التقارير السرية -->
     <div id="secretReports" class="page">
         <h1>🔒 التقارير السرية</h1>
-        <div id="secretReportsContainer"><p style="text-align:center;color:#aaa;">لا توجد تقارير سرية حالياً.</p></div>
+        <div id="secretReportsContainer"><p style="text-align:center;color:#aaa;">جاري تحميل التقارير السرية...</p></div>
         <button class="back" onclick="show('reports')">رجوع</button>
     </div>
 
 </div>
 
-<script>
-// قاعدة البيانات المحلية
-let wantedData = JSON.parse(localStorage.getItem("wanted")) || [];
-let reportsData = JSON.parse(localStorage.getItem("swat_reports")) || [];
+<!-- استدعاء مكتبات Firebase السحابية -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// كود التكوين الخاص بقاعدتك
+const firebaseConfig = {
+  apiKey: "AIzaSyBTTj1ww1VPYIHu1SyMg_KSYHZRcF8dRHI",
+  authDomain: "swat-system-384b0.firebaseapp.com",
+  projectId: "swat-system-384b0",
+  storageBucket: "swat-system-384b0.firebasestorage.app",
+  messagingSenderId: "874029124115",
+  appId: "1:874029124115:web:27657c0137fe73ec50cde6",
+  measurementId: "G-MVNRHGCGZE"
+};
+
+// تشغيل الفايربيس
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ربط الدوال بالويندوز عشان تشتغل بأزرار الـ HTML القديمة بدون مشاكل
+window.show = show;
+window.home = home;
+window.checkWantedPassword = checkWantedPassword;
+window.checkReportsPassword = checkReportsPassword;
+window.checkSecretPassword = checkSecretPassword;
+window.deleteWanted = deleteWanted;
+window.clearReportForm = clearReportForm;
+window.saveReport = saveReport;
+window.deleteReport = deleteReport;
 
 function show(id){
     document.getElementById("home").style.display="none";
@@ -391,7 +417,6 @@ function checkReportsPassword(){
     let pass=document.getElementById("reportsPassword").value;
     if(pass==="1029"){
         document.getElementById("reportsPassword").value="";
-        displayReports();
         show("reportsList");
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
@@ -400,53 +425,90 @@ function checkSecretPassword(){
     let pass=document.getElementById("secretPassword").value;
     if(pass==="1029"){
         document.getElementById("secretPassword").value="";
-        displayReports();
         show("secretReports");
     }else{ alert("❌ رمز الدخول غير صحيح"); }
 }
 
-// إدارة قوائم المطلوبين
-function saveWanted(){
-    localStorage.setItem("wanted",JSON.stringify(wantedData));
-}
-
-function displayWanted(){
-    let list=document.getElementById("wantedList");
-    list.innerHTML="";
-    if(wantedData.length === 0){
+// المراقبة المباشرة للمطلوبين من السيرفر (Real-time)
+onSnapshot(collection(db, "wanted"), (snapshot) => {
+    let list = document.getElementById("wantedList");
+    list.innerHTML = "";
+    if(snapshot.empty) {
         list.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:15px;">لا يوجد مطلوبين حالياً.</p>';
         return;
     }
-    wantedData.forEach((item,index)=>{
-        let card=document.createElement("div");
+    snapshot.forEach((docSnap) => {
+        let item = docSnap.data();
+        let id = docSnap.id;
+        let card = document.createElement("div");
         card.className = "wanted-card";
-        card.innerHTML=`
+        card.innerHTML = `
             <h3 style="color:#d8c27a;">${item.name}</h3>
             <p style="margin:5px 0;">التهمة: ${item.crime}</p>
-            <button onclick="deleteWanted(${index})" style="background:#542b2b;color:white;padding:8px;font-size:14px;">حذف المطلوب</button>
+            <button onclick="deleteWanted('${id}')" style="background:#542b2b;color:white;padding:8px;font-size:14px;">حذف المطلوب</button>
         `;
         list.appendChild(card);
     });
-}
+});
 
-function deleteWanted(index){
-    wantedData.splice(index,1);
-    saveWanted();
-    displayWanted();
-}
-
-document.getElementById("addWanted").onclick=function(){
-    let name=document.getElementById("wantedName").value.trim();
-    let crime=document.getElementById("wantedCrime").value.trim();
-    if(name==="" || crime===""){ alert("الرجاء ملء جميع الحقول"); return; }
-    wantedData.push({name:name, crime:crime});
-    saveWanted();
-    displayWanted();
-    document.getElementById("wantedName").value="";
-    document.getElementById("wantedCrime").value="";
+document.getElementById("addWanted").onclick = async function(){
+    let name = document.getElementById("wantedName").value.trim();
+    let crime = document.getElementById("wantedCrime").value.trim();
+    if(name==="" || crime==="") { alert("الرجاء ملء جميع الحقول"); return; }
+    
+    try {
+        await addDoc(collection(db, "wanted"), { name: name, crime: crime });
+        document.getElementById("wantedName").value = "";
+        document.getElementById("wantedCrime").value = "";
+    } catch(e) { alert("حدث خطأ أثناء الإضافة بالسيرفر"); }
 };
 
-// إدارة التقارير
+async function deleteWanted(id){
+    if(confirm("هل أنت متأكد من حذف هذا المطلوب؟")){
+        await deleteDoc(doc(db, "wanted", id));
+    }
+}
+
+// المراقبة المباشرة للتقارير من السيرفر (Real-time)
+onSnapshot(collection(db, "reports"), (snapshot) => {
+    let normalContainer = document.getElementById("normalReportsContainer");
+    let secretContainer = document.getElementById("secretReportsContainer");
+    
+    normalContainer.innerHTML = "";
+    secretContainer.innerHTML = "";
+
+    let normalCount = 0;
+    let secretCount = 0;
+
+    snapshot.forEach((docSnap) => {
+        let rep = docSnap.data();
+        let id = docSnap.id;
+        
+        let html = `
+            <div class="report-card">
+                <h3 style="color:#d8c27a;">تقرير رقم: ${rep.id} (${rep.type})</h3>
+                <p><b>📅 التاريخ والوقت:</b> ${rep.date} | ${rep.time}</p>
+                <p><b>👮 قائد العملية:</b> ${rep.leader}</p>
+                <p><b>👥 المشاركون:</b> ${rep.members || 'لا يوجد'}</p>
+                <p><b>📍 الموقع:</b> ${rep.location || 'غير محدد'}</p>
+                <p style="margin-top:10px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 التفاصيل:</b>\n${rep.details}</p>
+                <button onclick="deleteReport('${id}')" style="background:#542b2b; color:white; padding:6px; font-size:13px; margin-top:10px; width:auto;">🗑️ حذف التقرير</button>
+            </div>
+        `;
+        
+        if(rep.isSecret){
+            secretContainer.innerHTML += html;
+            secretCount++;
+        } else {
+            normalContainer.innerHTML += html;
+            normalCount++;
+        }
+    });
+
+    if(normalCount === 0) normalContainer.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد تقارير عادية حالياً.</p>';
+    if(secretCount === 0) secretContainer.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد تقارير سرية حالياً.</p>';
+});
+
 function clearReportForm(){
     document.getElementById("repId").value="";
     document.getElementById("repDate").value="";
@@ -459,7 +521,7 @@ function clearReportForm(){
     document.getElementById("secretReport").checked=false;
 }
 
-function saveReport(){
+async function saveReport(){
     let id = document.getElementById("repId").value.trim();
     let date = document.getElementById("repDate").value;
     let time = document.getElementById("repTime").value;
@@ -475,64 +537,24 @@ function saveReport(){
         return;
     }
 
-    reportsData.push({
-        id: id, date: date, time: time, leader: leader,
-        members: members, type: type, location: location,
-        details: details, isSecret: isSecret
-    });
-
-    localStorage.setItem("swat_reports", JSON.stringify(reportsData));
-    alert("تم حفظ التقرير بنجاح ✅");
-    clearReportForm();
-    show("reports");
+    try {
+        await addDoc(collection(db, "reports"), {
+            id: id, date: date, time: time, leader: leader,
+            members: members, type: type, location: location,
+            details: details, isSecret: isSecret
+        });
+        alert("تم حفظ التقرير في السيرفر بنجاح ✅");
+        clearReportForm();
+        show("reports");
+    } catch(e) { alert("خطأ بالسيرفر: لم يتم الحفظ"); }
 }
 
-function displayReports(){
-    let normalContainer = document.getElementById("normalReportsContainer");
-    let secretContainer = document.getElementById("secretReportsContainer");
-    
-    normalContainer.innerHTML = "";
-    secretContainer.innerHTML = "";
-
-    let normalCount = 0;
-    let secretCount = 0;
-
-    reportsData.forEach((rep, index) => {
-        let html = `
-            <div class="report-card">
-                <h3 style="color:#d8c27a;">تقرير رقم: ${rep.id} (${rep.type})</h3>
-                <p><b>📅 التاريخ والوقت:</b> ${rep.date} | ${rep.time}</p>
-                <p><b>👮 قائد العملية:</b> ${rep.leader}</p>
-                <p><b>👥 المشاركون:</b> ${rep.members || 'لا يوجد'}</p>
-                <p><b>📍 الموقع:</b> ${rep.location || 'غير محدد'}</p>
-                <p style="margin-top:10px; background:#151c24; padding:10px; border-radius:5px; white-space: pre-wrap;"><b>📝 التفاصيل:</b>\n${rep.details}</p>
-                <button onclick="deleteReport(${index})" style="background:#542b2b; color:white; padding:6px; font-size:13px; margin-top:10px; width:auto;">🗑️ حذف التقرير</button>
-            </div>
-        `;
-        
-        if(rep.isSecret){
-            secretContainer.innerHTML += html;
-            secretCount++;
-        } else {
-            normalContainer.innerHTML += html;
-            normalCount++;
-        }
-    });
-
-    if(normalCount === 0) normalContainer.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد تقارير عادية حالياً.</p>';
-    if(secretCount === 0) secretContainer.innerHTML = '<p style="text-align:center;color:#aaa;">لا توجد تقارير سرية حالياً.</p>';
-}
-
-function deleteReport(index){
-    if(confirm("هل أنت متأكد من حذف هذا التقرير؟")){
-        reportsData.splice(index, 1);
-        localStorage.setItem("swat_reports", JSON.stringify(reportsData));
-        displayReports();
+async function deleteReport(id){
+    if(confirm("هل أنت متأكد من حذف هذا التقرير نهائياً من السيرفر؟")){
+        await deleteDoc(doc(db, "reports", id));
     }
 }
-
-// العرض التلقائي الأولي عند التشغيل
-displayWanted();
 </script>
+
 </body>
 </html>
